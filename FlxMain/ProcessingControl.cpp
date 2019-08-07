@@ -37,28 +37,6 @@ ProcessingControl::ProcessingControl()
 {
 	this->inputsSwitched = false;
 
-	//right/control connector signal switches (audio/control_voltage/ground)
-	/*char gpioStr[5];
-	strcpy(gpioStr,"out");
-	this->footswitchLed[0] = GPIOClass(FS1_LED);
-	this->footswitchLed[0].exconnector_gpio();
-	this->footswitchLed[0].setdir_gpio(gpioStr);
-	this->footswitchLed[0].setval_gpio(1);
-
-	this->footswitchLed[1] = GPIOClass(FS2_LED);
-	this->footswitchLed[1].exconnector_gpio();
-	this->footswitchLed[1].setdir_gpio(gpioStr);
-	this->footswitchLed[1].setval_gpio(1);
-
-	strcpy(gpioStr,"in");
-	this->footswitchPin[0] = GPIOClass(FS1_PIN);
-	this->footswitchPin[0].exconnector_gpio();
-	this->footswitchPin[0].setdir_gpio(gpioStr);
-
-	this->footswitchPin[1] = GPIOClass(FS2_PIN);
-	this->footswitchPin[1].exconnector_gpio();
-	this->footswitchPin[1].setdir_gpio(gpioStr);*/
-
 	this->justPoweredUp = true;
 
 	this->toComboMemory = NULL;
@@ -385,21 +363,6 @@ ComboStruct ProcessingControl::getComboStruct()
 
 
 
-		/*for(auto & buffer : this->processParamControlBufferArray)
-		{
-			 if(buffer.destProcessParameterConnector.parentObjectName.empty()) break;
-
-			buffer.parameterValueIndex =
-					this->toComboMemory->processParamControlBufferArray[bufferIndex].
-					parameterValueIndex;
-
-
-			cout << "[" << bufferIndex << "]: ";
-			cout << buffer.destProcessParameterConnector.parentObjectName << ":";
-			cout << buffer.destProcessParameterConnector.connectorName << "=";
-			cout << buffer.parameterValueIndex << endl;
- 			bufferIndex++;
-		}*/
 #if(dbg >= 2)
 		 cout << "Getting Processes: " << endl;
 
@@ -424,8 +387,6 @@ ComboStruct ProcessingControl::getComboStruct()
 						this->processSequenceData[processIndex].parameterArray[paramIndex].parameterName;
 				combo.processSequenceData[processIndex].parameterArray[paramIndex].internalIndexValue =
 						this->processSequenceData[processIndex].parameterArray[paramIndex].internalIndexValue;
-				/*this->getProcessParameter(combo.processSequenceData[controlIndex].controlName,
-						combo.processSequenceData[controlIndex].parameterArray[paramIndex].parameterName);*/
 #if(dbg >= 2)
 				cout << "\t\tparameterName: " << combo.processSequenceData[processIndex].parameterArray[paramIndex].parameterName << endl;
 				cout << "\t\tvalue: " << combo.processSequenceData[processIndex].parameterArray[paramIndex].internalIndexValue << endl;
@@ -456,8 +417,6 @@ ComboStruct ProcessingControl::getComboStruct()
 						this->controlSequenceData[controlIndex].parameterArray[paramIndex].parameterName;
 				combo.controlSequenceData[controlIndex].parameterArray[paramIndex].value =
 						this->controlSequenceData[controlIndex].parameterArray[paramIndex].value;
-				/*this->getControlParameter(combo.controlSequenceData[controlIndex].controlName,
-						combo.controlSequenceData[controlIndex].parameterArray[paramIndex].parameterName);*/
 #if(dbg >= 2)
 				cout << "\t\tparameterName: " << combo.controlSequenceData[controlIndex].parameterArray[paramIndex].parameterName << endl;
 				cout << "\t\tvalue: " << combo.controlSequenceData[controlIndex].parameterArray[paramIndex].value << endl;
@@ -481,7 +440,7 @@ ComboStruct ProcessingControl::getComboStruct()
 
 
 
-#define dbg 1
+#define dbg 3
 int ProcessingControl::loadComboStruct(ComboStruct comboStruct)
 {
 	int status = 0;
@@ -498,7 +457,6 @@ int ProcessingControl::loadComboStruct(ComboStruct comboStruct)
 		this->processSignalBufferCount = comboStruct.processSignalBufferCount;
 		this->processParamControlBufferCount = comboStruct.processParamControlBufferCount;
 
-		//int controlParamBufferIndex = 0;
 		this->name= comboStruct.name;
 		cout << this->processCount << ":" << this->controlCount;
 		cout << ":" << this->processSignalBufferCount << ":" << this->processParamControlBufferCount << endl;
@@ -508,68 +466,26 @@ int ProcessingControl::loadComboStruct(ComboStruct comboStruct)
 		int k = 0;
 		for(i = 0; i < this->processCount; i++)
 		{
-			/*this->processSequenceData[i].processName=
-					comboStruct.processSequenceData[i].processName;
-			this->processSequenceData[i].processTypeInt =
-					comboStruct.processSequenceData[i].processTypeInt;
-
-			this->processSequenceData[i].footswitchNumber =
-					comboStruct.processSequenceData[i].footswitchNumber;
-			this->processSequenceData[i].processSequenceIndex =
-					comboStruct.processSequenceData[i].processSequenceIndex;*/
 			this->processSequenceData[i] = comboStruct.processSequenceData[i];
 #if(dbg >= 3)
 			 cout << "this->processSequenceData[" << i << "].processName: " << this->processSequenceData[i].processName << endl;
 			 cout << "this->processSequenceData[" << i << "].procType: " << this->processSequenceData[i].processTypeInt << endl;
 			 cout << "this->processSequenceData[" << i << "].footswitchNumber: " << this->processSequenceData[i].footswitchNumber << endl;
 #endif
-			//***************** Get input count and store values **************
-			/*this->processSequenceData[i].processInputCount =
-					comboStruct.processSequenceData[i].processInputCount;*/
 #if(dbg >= 2)
 			 cout << "this->processSequenceData[" << i << "].processInputCount: " << this->processSequenceData[i].processInputCount << endl;
 #endif
 
-			for(j = 0; j < comboStruct.processSequenceData[i].processInputCount; j++)
-			{
-				/*this->processSequenceData[i].inputBufferedConnectionIndexArray[j] =
-						comboStruct.processSequenceData[i].inputBufferedConnectionIndexArray[j];*/
-
-			}
-
-			//***************** Get output count and store values  **************
-			/*this->processSequenceData[i].processOutputCount =
-					comboStruct.processSequenceData[i].processOutputCount;*/
 #if(dbg >= 2)
 			 cout << "this->processSequenceData[" << i << "].processOutputCount: " << this->processSequenceData[i].processOutputCount << endl;
 #endif
 
-			for(j = 0; j < comboStruct.processSequenceData[i].processOutputCount; j++)
-			{
-
-				/*this->processSequenceData[i].outputProcessSignalConnectionIndexArray[j] =
-						comboStruct.processSequenceData[i].outputProcessSignalConnectionIndexArray[j];*/
-			}
 #if(dbg >= 2)
 				 cout << "this->processSequenceData[" << i << "].parameterCount: " << this->processSequenceData[i].parameterCount << endl;
 #endif
-
-			//***************** Get parameter count and store values **************
-			/*this->processSequenceData[i].parameterCount =
-					comboStruct.processSequenceData[i].parameterCount;*/
-
 			for(j = 0; j < comboStruct.processSequenceData[i].parameterCount; j++)
 			{
-				/*this->processSequenceData[i].parameter[j].internalIndexValue =
-						comboStruct.processSequenceData[i].parameter[j].internalIndexValue;
-				this->processSequenceData[i].parameter[j].paramContBufferIndex =
-						comboStruct.processSequenceData[i].parameter[j].paramContBufferIndex;
-				this->processSequenceData[i].parameter[j].parameterName=
-						comboStruct.processSequenceData[i].parameter[j].parameterName;
-				this->processSequenceData[i].parameter[j].controlConnected =
-						comboStruct.processSequenceData[i].parameter[j].controlConnected;
-				this->processSequenceData[i].parameter[j] =
-						comboStruct.processSequenceData[i].parameter[j];*/
+
 #if(dbg >= 3)
 				 cout << "this->processSequenceData[" << i << "].parameter[" << j << "]->";
 				 cout << "\tparameterName: "<< this->processSequenceData[i].parameterArray[j].parameterName;
@@ -579,76 +495,49 @@ int ProcessingControl::loadComboStruct(ComboStruct comboStruct)
 #endif
 			}
 
+
 			for(; j < 10; j++)
 			{
 				this->processSequenceData[i].parameterArray[j].internalIndexValue = 0;
 				this->processSequenceData[i].parameterArray[j].controlConnected = false;
 			}
-			this->processSequenceData[i].bufferSize = 256;//comboStruct.procUtil.bufferSize;
-			this->processSequenceData[i].inputCouplingMode = 1;//comboStruct.procUtil.inputCouplingMode;
-			this->processSequenceData[i].antiAliasingNumber = 1;//comboStruct.procUtil.antiAliasingNumber;
-			this->processSequenceData[i].waveshaperMode = 0;//comboStruct.procUtil.waveshaperMode;
+			this->processSequenceData[i].bufferSize = 256;
+			this->processSequenceData[i].inputCouplingMode = 1;
+			this->processSequenceData[i].antiAliasingNumber = 1;
+			this->processSequenceData[i].waveshaperMode = 0;
 		}
 
 		// set Controls
 
 		for(i = 0; i < this->controlCount; i++)
 		{
-			/*this->controlSequenceData[i].controlName=
-					comboStruct.controlSequenceData[i].controlName;
-			this->controlSequenceData[i].controlTypeInt =
-					comboStruct.controlSequenceData[i].controlTypeInt;*/
 			this->controlSequenceData[i] = comboStruct.controlSequenceData[i];
 #if(dbg >= 2)
 			 cout << "this->controlSequenceData[" << i << "].name: " << this->controlSequenceData[i].controlName << endl;
 			 cout << "this->controlSequenceData[" << i << "].controlTypeInt: " << this->controlSequenceData[i].controlTypeInt << endl;
 #endif
-
-			/*this->controlSequenceData[i].outputConnectionCount =
-					comboStruct.controlSequenceData[i].outputConnectionCount;*/
-
-			for(j = 0; j < comboStruct.controlSequenceData[i].outputConnectionCount; j++)
+			for(j = 0; j < comboStruct.controlSequenceData[i].outputInvConnectionCount; j++)
 			{
-				/*this->controlSequenceData[i].outputToParamControlBufferIndex[j] =
-						comboStruct.controlSequenceData[i].outputToParamControlBufferIndex[j];*/
+
 #if(dbg >= 2)
 				 cout << "this->controlSequenceData[" << i << "].outputToParamControlBufferIndex: " << this->controlSequenceData[i].outputToParamControlBufferIndex[j] << endl;
 #endif
-			}
 
-			/*this->controlSequenceData[i].outputInvConnectionCount =
-					comboStruct.controlSequenceData[i].outputInvConnectionCount;*/
 
-			for(j = 0; j < comboStruct.controlSequenceData[i].outputInvConnectionCount; j++)
-			{
-				/*this->controlSequenceData[i].outputInvToParamControlBufferIndex[j] =
-						comboStruct.controlSequenceData[i].outputInvToParamControlBufferIndex[j];*/
 #if(dbg >= 2)
 				 cout << "this->controlSequenceData[" << i << "].outputInvToParamControlBufferIndex: " << this->controlSequenceData[i].outputInvToParamControlBufferIndex[j] << endl;
 #endif
 			}
 
-/*#if(dbg >= 2)
-			 cout << "this->controlSequenceData[" << i << "].outputToParamControlBufferIndex: " << this->controlSequenceData[i].outputToParamControlBufferIndex << endl;
-			 cout << "this->controlSequenceData[" << i << "].outputInvToParamControlBufferIndex: " << this->controlSequenceData[i].outputInvToParamControlBufferIndex << endl;
-#endif*/
 
 
 #if(dbg >= 2)
 				 cout << "this->controlSequenceData[" << i << "].parameterCount: " << this->controlSequenceData[i].parameterCount << endl;
 #endif
 
-			/*this->controlSequenceData[i].parameterCount =
-					comboStruct.controlSequenceData[i].parameterCount;*/
 			int j = 0;
 			for(j = 0; j < comboStruct.controlSequenceData[i].parameterCount; j++)
 			{
-				/*this->controlSequenceData[i].parameter[j].parameterName=
-						comboStruct.controlSequenceData[i].parameter[j].parameterName;
-				this->controlSequenceData[i].parameter[j].value =
-						comboStruct.controlSequenceData[i].parameter[j].value;
-				this->controlSequenceData[i].parameter[j].cvEnabled =
-						comboStruct.controlSequenceData[i].parameter[j].cvEnabled;*/
 
 #if(dbg >= 3)
 
@@ -674,10 +563,6 @@ int ProcessingControl::loadComboStruct(ComboStruct comboStruct)
 
 		for(i = 0; i < this->processSignalBufferCount; i++)
 		{
-			/*this->processSignalBufferArray[i].src =
-					comboStruct.processSignalBufferArray[i].src;
-			this->processSignalBufferArray[i].dest =
-					comboStruct.processSignalBufferArray[i].dest;*/
 			this->processSignalBufferArray[i] = comboStruct.processSignalBufferArray[i];
 		}
 
@@ -687,19 +572,6 @@ int ProcessingControl::loadComboStruct(ComboStruct comboStruct)
 #endif
 		for(i = 0; i < comboStruct.processParamControlBufferCount; i++)
 		{
-			/*this->processParamControlBufferArray[i].destProcessParameterConnector.parentObjectName=
-					comboStruct.processParamControlBufferArray[i].destProcessParameterConnector.parentObjectName;
-			this->processParamControlBufferArray[i].destProcessParameterConnector.connectorName=
-					comboStruct.processParamControlBufferArray[i].destProcessParameterConnector.connectorName;
-			this->processParamControlBufferArray[i].destProcessParameterConnector.connectedBufferIndex =
-					comboStruct.processParamControlBufferArray[i].destProcessParameterConnector.connectedBufferIndex;
-			this->processParamControlBufferArray[i].srcControl.parentObjectName=
-					comboStruct.processParamControlBufferArray[i].srcControl.parentObjectName;
-			this->processParamControlBufferArray[i].srcControl.connectorName=
-					comboStruct.processParamControlBufferArray[i].srcControl.connectorName;
-			this->processParamControlBufferArray[i].srcControl.connectedBufferIndex =
-			this->processParamControlBufferArray[i].parameterValueIndex =
-					comboStruct.processParamControlBufferArray[i].parameterValueIndex;*/
 			this->processParamControlBufferArray[i] = comboStruct.processParamControlBufferArray[i];
 
 #if(dbg >= 3)
@@ -775,13 +647,11 @@ int ProcessingControl::sendIpcComboStruct(void)
 		this->toComboMemory->processSignalBufferCount = this->processSignalBufferCount;
 		this->toComboMemory->processParamControlBufferCount = this->processParamControlBufferCount;
 
-		//int controlParamBufferIndex = 0;
 		strncpy(this->toComboMemory->name, this->name.c_str(),20);
 
 		// set Processes
 		int i = 0;
 		int j = 0;
-		int k = 0;
 		for(i = 0; i < this->processCount; i++)
 		{
 			strncpy(this->toComboMemory->processSequenceData[i].processName,
@@ -1141,53 +1011,6 @@ int ProcessingControl::updateProcessParameter(string parentProcess, string param
 	 return status;
 }
 
-#define dbg 0
-int ProcessingControl::getProcessParameter(string processName, string parameter)
-{
-	int status = 0;
-
-#if(dbg >= 1)
-	 cout << "******* ENTERING: Processing::getProcessParameter" << endl;
-#endif
-	int valueIndex = 0;
-	try
-	{
-		int connectedBufferIndex = this->processIndexMap[processName.c_str()].
-						paramIndexMap[parameter.c_str()].processParamControlBufferIndex;
-
-#if(dbg >= 2)
-		cout << "connectedBufferIndex: " << connectedBufferIndex << endl;
-#endif
-		if(0 > connectedBufferIndex || 59 < connectedBufferIndex)
-		{
-			cout << "connectedBufferIndex out of bounds: " << connectedBufferIndex << endl;
-			status = -1;
-			connectedBufferIndex = -1;
-		}
-
-		valueIndex = this->processParamControlBufferArray[connectedBufferIndex].parameterValueIndex;
-		if(0 > valueIndex || 99 < valueIndex)
-		{
-			cout << "valueIndex out of bounds: " << valueIndex << endl;
-			status = -1;
-			valueIndex = -1;
-		}
-
-
-	}
-	catch(exception &e)
-	{
-		cout << "exception in Processing::getProcessParameter: " << e.what() << endl;
-		status = -1;
-	}
-
-#if(dbg >= 1)
-	 cout << "******* EXITING: Processing::getProcessParameter: " << status << endl;
-#endif
-	return valueIndex;
-}
-
-
 
 #define dbg 1
 int ProcessingControl::updateControlParameter(string parentControl, string parameter, int parameterValue)
@@ -1198,7 +1021,6 @@ int ProcessingControl::updateControlParameter(string parentControl, string param
 	 cout << "parentControl: " << parentControl << "\tparameter: " << parameter << "\tparameterValue: "  << parameterValue << endl;
 #endif
 	int status = 0;
-		// pull Processing::updateControlParameter() code into here:
 		try
 		{
 			int contIndex = this->controlIndexMap[parentControl.c_str()].controlIndex;
@@ -1241,32 +1063,6 @@ int ProcessingControl::updateControlParameter(string parentControl, string param
 }
 
 
-#define dbg 0
-int ProcessingControl::getControlParameter(string controlName, string parameter)
-{
-	int status = 0;
-	int valueIndex = 0;
-
-#if(dbg >= 1)
-	 cout << "******* ENTERING: Processing::getControlParameter" << endl;
-	 cout << "controlName: " << controlName << "\tparameter: " << parameter << endl;
-#endif
-	int contIndex = this->controlIndexMap[controlName.c_str()].controlIndex;
-	int paramIndex = this->controlIndexMap[controlName.c_str()].
-					paramIndexMap[parameter.c_str()].contParamIndex;
-
-	valueIndex = this->controlSequenceData[contIndex].parameterArray[paramIndex].value;
-	if(0 <= valueIndex && valueIndex <= 99) status = valueIndex;
-	else status = -1;
-
-
-#if(dbg >= 1)
-	 cout << "******* EXITING: Processing::getControlParameter: " << status << endl;
-#endif
-
-
-	return status;
-}
 
 
 

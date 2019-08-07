@@ -45,19 +45,14 @@ private:
 	JackUtility jackUtil;
 	NoiseGateUtility gateUtil;
 	EnvTriggerUtility triggerUtil;
-	PedalUtility pedalUtil;
-	HostPcUtility hostUtil;
 
 	bool validateBoolData(bool utilityParameterValue, bool defaultValue);
 	int validateIntData(int utilityParameterValue, UtilIntValue utilInt);
 	double validateDoubleData(double utilityParameterValue, UtilDoubleValue utilDouble);
 	string validateOptionData(string utilityParameterOption, UtilOption utilOption);
-#if(1)
 	int createProcessingUtilityIPC();
 	int openProcessingUtilityIPC();
-
 	int closeProcessingUtilityIPC();
-#endif
 
 
 public:
@@ -75,12 +70,6 @@ public:
 	JackUtility getJackUtility();
 	NoiseGateUtility getNoiseGateUtility();
 	EnvTriggerUtility getEnvTriggerUtility();
-	PedalUtility getPedalUtility();
-	HostPcUtility getHostUtility();
-
-	void setNoiseGateUtility(NoiseGateUtility gateTrigUtil);
-	void setEnvTriggerUtility(EnvTriggerUtility gateTrigUtil);
-	void setJackUtility(JackUtility jackUtil);
 
 	/************* Process Utility functions *****************/
 #if(1)

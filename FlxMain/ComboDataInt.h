@@ -23,6 +23,7 @@
 #include "structs.h"
 #include "utilityFunctions.h"
 #include "IpcStructs.h"
+
 #define JSON_BUFFER_LENGTH 32000
 
 
@@ -77,15 +78,9 @@ private:
 	std::vector<ProcessParameterControlConnection> sortedControlConnectionStructVector;
 
 
-	// Use processSignalBufferArray and processParamControlBufferArray as publish/subscribe arrays.
-	//ProcessSignalBuffer processSignalBufferArray[60];
-	//ProcessParameterControlBuffer processParamControlBufferArray[60];
-	//int footswitchStatus[10];
 	vector<Process>::size_type processCount;
 	int effectCount;
 	vector<Control>::size_type controlCount;
-	//vector<ProcessSignalBuffer>::size_type processSignalBufferCount;
-	//vector<ProcessParameterControlBuffer>::size_type processParamControlBufferCount;
 
 	// **************** CENTRAL DATA MODEL ************************/
 	ComboStruct comboStruct;
@@ -151,11 +146,6 @@ private:
 	//the above 3 functions go into this function
 	void setComboStructProcessDataObject(int sequenceIndex, Process);
 
-	// these only set the values or connection indexes
-	/*void setComboStructProcessInputBufferIndexes(ProcessObjectData *processData, int processInputArray[]);
-	void setComboStructProcessOutputBufferIndexes(ProcessObjectData *processData, int processOutputArray[]);
-	void setComboStructProcessParameterValues(ProcessObjectData *processData,  ProcessObjectParameter parameterArray[]);
-	void setComboStructProcessDataObject(int sequenceIndex, ProcessObjectData processObjectData);*/
 
 
 	void setComboStructControlOutputs(int sequenceIndex, Control);
@@ -163,12 +153,7 @@ private:
 	void setComboStructControlParameters(int sequenceIndex, Control);
 	//the above 3 functions go into this function
 	void setComboStructControlDataObject(int sequenceIndex, Control);
-	/*void setComboStructControlOutputs(ControlObjectData *controlData, int outputArray[]);
-	void setComboStructControlOutputInvs(ControlObjectData *controlData, int outputInvArray[]);
-	void setComboStructControlParameters(ControlObjectData *controlData, ControlObjectParameter parameterArray[]);
-	void setComboStructControlDataObject(int sequenceIndex, ControlObjectData controlObjectData);*/
 
-	//ProcessParameterControlBufferArrayStruct getComboStructProcessParameterControlBufferArray(void);
 	void setComboStructProcessParameterControlBufferArray(void);
 	void setComboStructProcessSignalBufferArray(void);
 
@@ -181,25 +166,23 @@ private:
 	int loadComboFileStructDataBackIntoEffectComboJson();
 	int loadComboStructDataBackIntoEffectComboJson();
 
-protected:
+
 	ProcessUtility processUtil;
-
-public:
-	ComboDataInt();
-	virtual ~ComboDataInt();
-
-	/*map<string, ProcessIndexing>  processIndexMap;
-	map<string, ControlIndexing>  controlIndexMap;*/
-
 	void transferComboStructBackToEffectComboJson();
 	void setComboStructParamValues(ComboStruct combo);
 	int loadIndexMappedComboData2(Json::Value comboJson);
 
+public:
+	ComboDataInt();
+	ComboDataInt(Json::Value comboJson);
+	virtual ~ComboDataInt();
+
+
+
 	void setProcessUtilityData(ProcessUtility procUtil);
 	Json::Value getPedalUiJson(void);
-	//int saveCombo(ComboStruct combo);  // transferred to ComboMap class
 	string getName();
-	void setComboStruct(ComboStruct combo);
+	void updateComboDataInt(ComboStruct combo);
 	void loadComboStruct(void);
 	ComboStruct getComboStruct();
 	_ipcComboStruct getIpcComboStruct();

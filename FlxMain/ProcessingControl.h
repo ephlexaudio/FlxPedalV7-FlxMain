@@ -30,28 +30,16 @@
 #include "GPIOClass.h"
 #include "config.h"
 #include "structs.h"
-//#include "Processing.h"
 #include "IpcStructs.h"
 
 class ProcessingControl
 {
 private:
-	/*Processing *processing;
-	int bufferSize;*/
 	NoiseGateUtility gateUtil;
 	EnvTriggerUtility triggerUtil;
 	JackUtility jackUtil;
 	bool justPoweredUp;
 	bool inputsSwitched;
-	/*bool footSwitchPressed[2];
-	bool footswitchStatus[FOOTSWITCH_COUNT] = {false, false};
-	GPIOClass footswitchLed[2];
-	GPIOClass footswitchPin[2];
-	array<bool,10> footswitchStatusArray;*/
-	/*array<ProcessSignalBuffer,60> bufferedProcessConnectionArray;
-	array<ProcessParameterControlConnection,60> processParamControlConnectionArray;
-	map<string, ProcessIndexing>  processIndexMap;
-	map<string, ControlIndexing>  controlIndexMap;*/
 	/********** COMBO STRUCT DATA ******************/
 	string name;
 	ProcessObjectData processSequenceData[20]; // array of Process child classes
@@ -81,14 +69,14 @@ private:
 	int openProcessingComboIPC();
 	int closeProcessingComboIPC();
 
-
-
-
 public:
 	ProcessingControl();
 	~ProcessingControl();
 
-
+	/**************** Combo Change Functions*****************/
+	int loadComboStruct(ComboStruct comboStruct);
+	ComboStruct getComboStruct();
+	int sendIpcComboStruct();
 	/************** JACK Functions ***************/
 	void setJackUtility(JackUtility jackUtil);
 	int startJack(void);
@@ -96,23 +84,14 @@ public:
 	/*************** Combo Processing Functions ********************/
 	int startComboProcessing();
 	void stopComboProcessing();
-	/**************** Combo Change Functions*****************/
-	int loadComboStruct(ComboStruct comboStruct);
-	ComboStruct getComboStruct();
-	int sendIpcComboStruct();
 
 	/***************** Enable AudioOutput functions****************/
 	void enableAudioOutput();
 	void disableAudioOutput();
 	/******************* Process/Control parameter functions ******************/
 	int updateProcessParameter(string parentProcess, string parameter, int parameterValue);
-	int getProcessParameter(string processName, string parameter);
 	int updateControlParameter(string parentControl, string parameter, int parameterValue);
-	int getControlParameter(string controlName, string parameter);
-	void readFootswitches(void);
 	/*************** Symbol functions*****************/
-
-
 	void loadSymbols();
 	vector<string> getComponentSymbols();
 	vector<string> getControlSymbols();

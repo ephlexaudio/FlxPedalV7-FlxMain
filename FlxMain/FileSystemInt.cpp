@@ -7,28 +7,25 @@
 #include "config.h"
 #include "FileSystemInt.h"
 
-//extern bool debugOutput;
-
 using namespace std;
 
 
 	FileSystemInt::FileSystemInt ()
 	{
-		// TODO Auto-generated constructor stub
 
 	}
 
 	FileSystemInt::~FileSystemInt ()
 	{
-		// TODO Auto-generated destructor stub
+
 	}
 
 
-#define dbg 0
+#define dbg 2
 std::vector<string> FileSystemInt::getComboListFromFileSystem(void)
 {
 #if(dbg >= 1)
-	 cout << "***** ENTERING: FileSystemInt::getComboListFromFileSystem" << endl;
+	 cout << "***** ENTERING: FileSystemInt::" << __func__ << endl;
 #endif
 	 int status = 0;
 	std::vector<string> comList;
@@ -56,6 +53,7 @@ std::vector<string> FileSystemInt::getComboListFromFileSystem(void)
 				comList.push_back(buffer);
 	#if(dbg>=2)
 				 cout << buffer << endl;
+
 	#endif
 
 				clearBuffer(buffer,20);
@@ -68,27 +66,36 @@ std::vector<string> FileSystemInt::getComboListFromFileSystem(void)
 	}
 	catch(exception &e)
 	{
-		cout << "exception in FileSystemInt::getComboListFromFileSystem: " << e.what() << endl;
+		cout << "exception in FileSystemInt:: " << __func__ << ": " << e.what() << endl;
 		status = -1;
 	}
 
-#if(dbg >= 1)
-	 cout << "***** EXITING: FileSystemInt::getComboListFromFileSystem: " << status << endl;
+#if(dbg>=2)
+			cout << "ComboList: ";
+			for(auto & name : comList)
+			{
+				cout << name << ",";
+			}
+			cout << endl;
 #endif
+#if(dbg >= 1)
+	 cout << "***** EXITING: FileSystemInt::" << __func__ << ": " << status << endl;
+#endif
+
 	return comList;
 }
 
-#define dbg 0
+#define dbg 2
 string FileSystemInt::saveComboDataFromHostToFileSystem(std::string comboJson)
 {
 #if(dbg >= 1)
-	 cout << "***** ENTERING: FileSystemInt::saveComboToFileSystem" << endl;
+	 cout << "***** ENTERING: FileSystemInt::" << __func__ << endl;
 #endif
 	 int status = 0;
 	string name;
 	FILE *saveComboFD;
 	Json::Value tempJsonCombo;
-	//int charCount = 0;
+
 	char comboDataBuffer[FILE_SIZE];
 	Json::Reader dataReader;
 	try
@@ -103,7 +110,7 @@ string FileSystemInt::saveComboDataFromHostToFileSystem(std::string comboJson)
 		{
 			snprintf(fileNameBuffer, 49,"/home/Combos/%s.txt", tempJsonCombo["name"].asString().c_str());
 	#if(dbg>=2)
-			 std::cout << "saveComboToFileSystem: " << fileNameBuffer << '\n';
+			 cout << "saveComboToFileSystem: " << fileNameBuffer << endl;
 	#endif
 			if((saveComboFD = fopen(fileNameBuffer,"w")) != NULL )
 			{
@@ -135,7 +142,7 @@ string FileSystemInt::saveComboDataFromHostToFileSystem(std::string comboJson)
 
 
 #if(dbg >= 1)
-	 cout << "***** EXITING: FileSystemInt::saveComboToFileSystem: " << name << "\tstatus: " << status <<  endl;
+	 cout << "***** EXITING: FileSystemInt::" << __func__ << ": " << name << "\tstatus: " << status <<  endl;
 #endif
 	return name;
 }
@@ -145,7 +152,7 @@ string FileSystemInt::saveComboDataFromHostToFileSystem(std::string comboJson)
 string FileSystemInt::loadComboDataFromFileSystemToHost(string comboName)
 {
 #if(dbg >= 1)
-	if(debugOutput) cout << "***** ENTERING: FileSystemFuncts::getComboDataFromFileSystem" << endl;
+	if(debugOutput) cout << "***** ENTERING: FileSystemInt::" << __func__ << endl;
 	if(debugOutput) cout << "comboName: " << comboName << endl;
 #endif
 
@@ -183,7 +190,7 @@ string FileSystemInt::loadComboDataFromFileSystemToHost(string comboName)
 		fclose(fdCombo);
 	}
 #if(dbg >= 1)
-	if(debugOutput) cout << "***** EXITING: FileSystemFuncts::getComboDataFromFileSystem: " << status << endl;
+	if(debugOutput) cout << "***** EXITING: FileSystemInt::" << __func__ << ": " << status << endl;
 #endif
 	return jsonBufferString;
 }
@@ -194,7 +201,7 @@ string FileSystemInt::loadComboDataFromFileSystemToHost(string comboName)
 Json::Value FileSystemInt::loadValidatedComboJsonDataFromFileSystemToComboMap(std::string comboName)
 {
 #if(dbg >= 1)
-	 cout << "***** ENTERING: FileSystemInt::loadValidatedComboJsonDataFromFileSystemToComboMap" << endl;
+	 cout << "***** ENTERING: FileSystemInt::" << __func__ << endl;
 	 cout << "comboName: " << comboName << endl;
 #endif
 	 int status = 0;
@@ -266,7 +273,7 @@ Json::Value FileSystemInt::loadValidatedComboJsonDataFromFileSystemToComboMap(st
 	}
 
 #if(dbg >= 1)
-	 cout << "***** EXITING: FileSystemInt::getComboDataFromFileSystem: " << status << endl;
+	 cout << "***** EXITING: FileSystemInt::" << __func__ << ": " << status << endl;
 #endif
 	return comboJsonData;
 }
@@ -278,7 +285,7 @@ Json::Value FileSystemInt::loadValidatedComboJsonDataFromFileSystemToComboMap(st
 string FileSystemInt::saveComboJsonDataFromComboMapToFileSystem(Json::Value comboJsonData)
 {
 #if(dbg >= 1)
-	 cout << "***** ENTERING: FileSystemInt::saveComboJsonDataFromComboMapToFileSystem" << endl;
+	 cout << "***** ENTERING: FileSystemInt::" << __func__ << endl;
 #endif
 #if(dbg >= 2)
 	 cout << comboJsonData.toStyledString() << endl;
@@ -286,7 +293,7 @@ string FileSystemInt::saveComboJsonDataFromComboMapToFileSystem(Json::Value comb
 	 int status = 0;
 	string name;
 	FILE *saveComboFD;
-	//int charCount = 0;
+
 	char comboDataBuffer[FILE_SIZE];
 	Json::Reader dataReader;
 	string comboDataString;
@@ -325,7 +332,7 @@ string FileSystemInt::saveComboJsonDataFromComboMapToFileSystem(Json::Value comb
 
 
 #if(dbg >= 1)
-	 cout << "***** EXITING: FileSystemInt::saveComboJsonDataFromComboMapToFileSystem: " << name << "\tstatus: " << status << endl;
+	 cout << "***** EXITING: FileSystemInt::" << __func__ << ": " << name << "\tstatus: " << status << endl;
 #endif
 	return name;
 }
@@ -335,7 +342,7 @@ int FileSystemInt::deleteComboFromFileSystem(std::string comboName)
 {
 	int status = 0;
 #if(dbg >= 1)
-	 cout << "***** ENTERING: FileSystemInt::deleteComboFromFileSystem" << endl;
+	 cout << "***** ENTERING: FileSystemInt::" << __func__ << endl;
 	 cout << "comboName: " << comboName << endl;
 #endif
 		try
@@ -365,7 +372,7 @@ int FileSystemInt::deleteComboFromFileSystem(std::string comboName)
 		}
 
 #if(dbg >= 1)
-		 cout << "***** EXITING: FileSystemInt::deleteComboFromFileSystem: " << status << endl;
+		 cout << "***** EXITING: FileSystemInt::" << __func__ << ": " << status << endl;
 #endif
 
 	return status;
@@ -375,7 +382,7 @@ int FileSystemInt::deleteComboFromFileSystem(std::string comboName)
 Json::Value FileSystemInt::loadPedalUtilityJsonDataFromFileSystem()
 {
 #if(dbg >= 1)
-	 cout << "***** ENTERING: FileSystemInt::loadPedalUtilityJsonDataFromFileSystem" << endl;
+	 cout << "***** ENTERING: FileSystemInt::" << __func__ << endl;
 
 #endif
 	 int status = 0;
@@ -449,7 +456,7 @@ Json::Value FileSystemInt::loadPedalUtilityJsonDataFromFileSystem()
 	}
 
 #if(dbg >= 1)
-	 cout << "***** EXITING: FileSystemInt::loadPedalUtilityJsonDataFromFileSystem: " << status << endl;
+	 cout << "***** EXITING: FileSystemInt::" << __func__ << ": " << status << endl;
 #endif
 	return utilityJsonData;
 }
@@ -459,7 +466,7 @@ Json::Value FileSystemInt::loadPedalUtilityJsonDataFromFileSystem()
 int FileSystemInt::savePedalUtilityJsonDataToFileSystem(Json::Value utilityJsonData)
 {
 #if(dbg >= 1)
-	 cout << "***** ENTERING: FileSystemInt::savePedalUtilityJsonDataToFileSystem" << endl;
+	 cout << "***** ENTERING: FileSystemInt::" << __func__ << endl;
 #endif
 #if(dbg >= 2)
 	 cout << utilityJsonData.toStyledString() << endl;
@@ -467,7 +474,7 @@ int FileSystemInt::savePedalUtilityJsonDataToFileSystem(Json::Value utilityJsonD
 	 int status = 0;
 	string name;
 	FILE *saveUtilityFD;
-	//int charCount = 0;
+
 	char utilityDataBuffer[FILE_SIZE];
 	Json::Reader dataReader;
 	string utilityDataString;
@@ -506,7 +513,7 @@ int FileSystemInt::savePedalUtilityJsonDataToFileSystem(Json::Value utilityJsonD
 
 
 #if(dbg >= 1)
-	 cout << "***** EXITING: FileSystemInt::savePedalUtilityJsonDataToFileSystem: " << status << endl;
+	 cout << "***** EXITING: FileSystemInt::" << __func__ << ": " << status << endl;
 #endif
 	return status;
 

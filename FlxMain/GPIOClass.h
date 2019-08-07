@@ -26,8 +26,8 @@ private:
 public:
 	GPIOClass();
 	GPIOClass(int/*string*/ gnum);
-	int exconnector_gpio();
-	int unexconnector_gpio();
+	int export_gpio();
+	int unexport_gpio();
     int setdir_gpio(char*/*string*/ dir);
     int setval_gpio(int/*string*/ val);
     int getval_gpio(int/*string &*/ &val);

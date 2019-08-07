@@ -38,7 +38,7 @@ private:
 		int change;
 		string comboName;
 		string currentStatus;
-		bool usbPortOpen;
+		bool portOpen;
 		bool hostGuiActive;
 		int exit;
 	};
@@ -67,7 +67,7 @@ public:
 	int sendComboList(string comboList);
 	int openIPCFiles(void);
 	int closeIPCFiles(void);
-	void sendUsbPortOpen(bool usbPortOpen);
+	void sendPortOpen(bool usbPortOpen);
 	void sendHostGuiActive(bool hostGuiActive);
 };
 

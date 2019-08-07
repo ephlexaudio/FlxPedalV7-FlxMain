@@ -24,29 +24,6 @@ using namespace std;
 
 
 
-#if 0
-void ComboMap::updateMapEntry(ComboStruct comboData)
-{
-	int status = 0;
-#if(dbg >= 1)
-	 cout << "*****ENTERING ComboMap::updateMap" << endl;
-	 cout << "comboName: " << comboData.name << endl;
-#endif
-	 try
-	 {
-		 this->comboDataMap[comboData.name].setComboStructParamValues(comboData);//setComboStructParamValues
-	 }
-	 catch(exception &e)
-	 {
-		 cout << "exception in ComboMap::updateMap: " << e.what() << endl;
-		 status = -1;
-	 }
-#if(dbg >= 1)
-		 cout << "***** EXITING ComboMap::updateMap: " << comboData.name << "\tstatus: " << status << endl;
-#endif
-
-}
-#endif
 
 
 #define dbg 0
@@ -103,8 +80,6 @@ int ComboMap::loadComboMapAndList(void)
 	 {
 		 comboDataMap.clear();
 
-		// bool exit = false;
-
 		 for(auto & comboName : this->comboNameVector)
 		 {
 			 if(comboName.empty() == false && comboName.length() < 20)
@@ -142,16 +117,16 @@ int ComboMap::addNewComboObjectToMapAndList(string comboName)
 	 cout << "*****ENTERING ComboMap::addNewComboObjectToMapAndList" << endl;
 	 cout << "comboName: " << comboName << endl;
 #endif
-	ComboDataInt tempCombo;
+	 //ComboDataInt tempCombo;
 	 try
 	 {
 			Json::Value comboJsonData = fsInt.loadValidatedComboJsonDataFromFileSystemToComboMap(comboName);
 
-			tempCombo.loadIndexMappedComboData2(comboJsonData);
+			//tempCombo.loadIndexMappedComboData2(comboJsonData);
 
-			if(tempCombo.getName().empty() == false)
+			if(comboJsonData["name"].asString().empty() == false)
 			{
-				comboDataMap[comboName] = tempCombo;
+				comboDataMap[comboName] = ComboDataInt(comboJsonData);
 
 
 				if(find(this->comboNameVector.begin(), this->comboNameVector.end(), comboName) == this->comboNameVector.end())
@@ -191,10 +166,10 @@ int ComboMap::addNewComboObjectToMap(string comboName)
 	 try
 	 {
 			Json::Value comboJsonData = fsInt.loadValidatedComboJsonDataFromFileSystemToComboMap(comboName);
-			tempCombo.loadIndexMappedComboData2(comboJsonData);
+			//tempCombo.loadIndexMappedComboData2(comboJsonData);
 			if(tempCombo.getName().empty() == false)
 			{
-				comboDataMap[comboName] = tempCombo;
+				comboDataMap[comboName] = ComboDataInt(fsInt.loadValidatedComboJsonDataFromFileSystemToComboMap(comboName));
 			}
 			else
 			{
@@ -231,8 +206,8 @@ int ComboMap::loadCombosFromFileSystemToComboMap()
 		for(auto & comboName : this->comboNameVector)
 		{
 			ComboDataInt tempComboData;
-			tempComboData.loadIndexMappedComboData2(fsInt.loadValidatedComboJsonDataFromFileSystemToComboMap(comboName));
-			this->comboDataMap[comboName] = tempComboData;
+			//tempComboData.loadIndexMappedComboData2(fsInt.loadValidatedComboJsonDataFromFileSystemToComboMap(comboName));
+			this->comboDataMap[comboName] = ComboDataInt(fsInt.loadValidatedComboJsonDataFromFileSystemToComboMap(comboName));
 		}
 	}
 	catch(exception &e)
@@ -305,9 +280,7 @@ int ComboMap::saveCombo(ComboStruct comboData)
 	 try
 	 {
 		 string name = comboData.name;
-		 this->comboDataMap[comboData.name].setComboStructParamValues(comboData);
-		this->comboDataMap[name].transferComboStructBackToEffectComboJson();
-
+		this->comboDataMap[name].updateComboDataInt(comboData);
 		Json::Value comboJson = this->comboDataMap[name].getEffectComboJson();
 
 #if(dbg >= 2)
@@ -328,7 +301,6 @@ int ComboMap::saveCombo(ComboStruct comboData)
 			}
 		}
 #endif
-		//string comboName = fsInt.saveComboJsonDataFromComboMapToFileSystem(this->comboDataMap[name].getEffectComboJson());
 	 }
 	 catch(exception &e)
 	 {

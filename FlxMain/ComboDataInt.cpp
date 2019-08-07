@@ -27,6 +27,12 @@ using namespace std;
 		this->comboStruct.processParamControlBufferCount = 0;
 	}
 
+
+	ComboDataInt::ComboDataInt(Json::Value comboJson)
+	{
+		this->loadIndexMappedComboData2(comboJson);
+	}
+
 	ComboDataInt::~ComboDataInt()
 	{
 
@@ -164,17 +170,13 @@ using namespace std;
 		{
 			cout << "CONTROL BUFFER LIST:" << endl;
 			int i = 0;
-			//for(int i = 0; i < this->comboStruct.processParamControlBufferCount; i++)
 			for(auto & procParamContBuffer : this->comboStruct.processParamControlBufferArray)
 			{
-				/*ProcessParameterControlBuffer procParamContBuffer =
-						this->comboStruct.processParamControlBufferArray[i];*/
 				cout << "buffer[" << i << "]: " << endl;
 				cout << procParamContBuffer.srcControlOutputConnector.parentObjectName << ":" << procParamContBuffer.srcControlOutputConnector.connectorName << endl;
 				cout << "destProcessParamVector: " << endl;
 				cout << "\t\t" << procParamContBuffer.destProcessParameterConnector.parentObjectName;
 				cout << ":" << procParamContBuffer.destProcessParameterConnector.connectorName << endl;
-				//cout << ":" << procParamContBuffer.parameterValueIndex << endl;
 
 				i++;
 			}
@@ -190,10 +192,9 @@ using namespace std;
 #if(dbg >= 1)
 
 		{
-			cout << " ENTERING ComboDataInt::debugPrintParamContBufferListWithConnections" << endl;
+			cout << " ENTERING ComboDataInt::" << __func__ << endl;
 			bool exit = false;
 			int paramContBufferIndex = 0;
-			//for(int i = 0; i < this->comboStruct.processParamControlBufferCount; i++)
 			for(auto & processParamControlBuffer : this->comboStruct.processParamControlBufferArray)
 			{
 				Connector controlConn = processParamControlBuffer.srcControlOutputConnector;
@@ -208,7 +209,7 @@ using namespace std;
 
 				paramContBufferIndex++;
 			}
-			cout << " EXITING ComboDataInt::debugPrintParamContBufferListWithConnections" << endl;
+			cout << " EXITING ComboDataInt::" << __func__ << endl;
 		}
 #endif
 	}
@@ -217,32 +218,28 @@ using namespace std;
 	void ComboDataInt::printIndexMappedProcessData()
 	{
 #if(dbg >= 1)
-
+		cout << "*****ENTERING ComboDataInt::" << __func__ << endl;
+		cout << "PROCESS INDEX MAPPING" << endl;
+		cout << "size: " << this->comboStruct.processIndexMap.size() << endl;
+		for (auto &  processIndexing : this->comboStruct.processIndexMap)
 		{
-			cout << "*****ENTERING ComboDataInt::printIndexMappedProcessData" << endl;
-			cout << "PROCESS INDEX MAPPING" << endl;
-			cout << "size: " << this->comboStruct.processIndexMap.size() << endl;
-			for (auto &  processIndexing : this->comboStruct.processIndexMap)
+
+			cout << "PROCESS:" << processIndexing.second.processName << endl;
+			cout << "name: " << processIndexing.second.processName << endl;
+			cout << "processSequenceIndex: " << processIndexing.second.processSequenceIndex << endl;
+			cout << "parentEffect: " << processIndexing.second.parentEffect << endl;
+
+			cout << "paramIndexMap size: " << processIndexing.second.paramIndexMap.size() << endl;
+			for(auto &  processParamIndexing : processIndexing.second.paramIndexMap)
 			{
-
-				cout << "PROCESS:" << processIndexing.second.processName << endl;
-				cout << "name: " << processIndexing.second.processName << endl;
-				cout << "processSequenceIndex: " << processIndexing.second.processSequenceIndex << endl;
-				cout << "parentEffect: " << processIndexing.second.parentEffect << endl;
-
-				cout << "paramIndexMap size: " << processIndexing.second.paramIndexMap.size() << endl;
-				for(auto &  processParamIndexing : processIndexing.second.paramIndexMap)
-				{
-					cout << "\t\t parameter name: " << processParamIndexing.second.paramName << endl;
-					cout << "\t\t parameter index: " << processParamIndexing.second.paramIndex << endl;
-					cout << "\t\t parentProcess: " << processParamIndexing.second.parentProcess << endl;
-					cout << "\t\t parameter paramControlBufferIndex: " << processParamIndexing.second.processParamControlBufferIndex << endl;
-				}
-				cout << "**********************************************" << endl;
+				cout << "\t\t parameter name: " << processParamIndexing.second.paramName << endl;
+				cout << "\t\t parameter index: " << processParamIndexing.second.paramIndex << endl;
+				cout << "\t\t parentProcess: " << processParamIndexing.second.parentProcess << endl;
+				cout << "\t\t parameter paramControlBufferIndex: " << processParamIndexing.second.processParamControlBufferIndex << endl;
 			}
-			cout << "***** EXITING ComboDataInt::printIndexMappedProcessData: "  << endl;
+			cout << "**********************************************" << endl;
 		}
-
+		cout << "***** EXITING ComboDataInt::" << __func__  << endl;
 #endif
 
 	}
@@ -253,7 +250,7 @@ using namespace std;
 #if(dbg >= 1)
 
 		{
-			cout << "*****ENTERING ComboDataInt::printIndexMappedControlData" << endl;
+			cout << "*****ENTERING ComboDataInt::" << __func__ << endl;
 			cout << "CONTROL INDEX MAPPING" << endl;
 
 			for (auto &  controlIndexing : this->comboStruct.controlIndexMap)
@@ -275,7 +272,7 @@ using namespace std;
 				}
 			}
 
-			cout << "***** EXITING ComboDataInt::printIndexMappedControlData: "  << endl;
+			cout << "***** EXITING ComboDataInt::" << __func__  << endl;
 		}
 
 
@@ -287,14 +284,12 @@ using namespace std;
 	{
 #if(dbg >= 1)
 
-		{
-			cout << "*****ENTERING ComboDataInt::printIndexMappedComboData" << endl;
+			cout << "*****ENTERING ComboDataInt::" << __func__ << endl;
 			cout << "COMBO INDEX MAPPING" << endl;
 			this->printIndexMappedProcessData();
 
 			this->printIndexMappedControlData();
-			cout << "***** EXITING ComboDataInt::printIndexMappedComboData: " << endl;
-		}
+			cout << "***** EXITING ComboDataInt::" << __func__ << endl;
 #endif
 
 	}
@@ -304,13 +299,11 @@ using namespace std;
 	{
 #if(dbg >= 1)
 
-		{
 			cout << "*****ENTERING ComboDataInt::printPedalUIData" << endl;
 
 
 			cout << getCompactedJSONData(this->pedalUiJson) << endl;
 			cout << "***** EXITING ComboDataInt::printPedalUIData " << endl;
-		}
 #endif
 
 	}
@@ -361,28 +354,33 @@ using namespace std;
 	vector<Process>  ComboDataInt::loadProcessStructVectorFromJsonProcessArray(int parentEffectIndex, Json::Value processArray)
 	{
 #if(dbg >= 1)
-		 cout << "*****ENTERING ComboDataInt::loadProcessStructVectorFromJsonProcessArray: " << endl;
+		 cout << "*****ENTERING ComboDataInt::" << __func__ << endl;
 #endif
 #if(dbg >= 3)
 		cout << getCompactedJSONData(processArray) << endl;
 #endif
 		int status = 0;
 		string causeOfException;
-		vector<Process> processVector(processArray.size());	// need temporary array to use indexing.
+		int processArraySize = processArray.size();
+
+		vector<Process> processVector(processArraySize);	// need temporary array to use indexing.
 
 		try
 		{
-			//vector<Process> tempProcessVector(processArray.size());	// need temporary array to use indexing.
 			for(auto & process : processArray)
 			{
 
 				int processEffectIndex = process["index"].asUInt();
 				processVector[processEffectIndex].processEffectIndex = processEffectIndex;
 				processVector[processEffectIndex].processName = process["name"].asString();
-#if(dbg >= 2)
-				cout << "process name: " << processVector[processEffectIndex].processName << endl;
-#endif
-				processVector[processEffectIndex].processTypeString = process["type"].asString();
+				if(process["type"].asString().empty() == false)
+				{
+					processVector[processEffectIndex].processTypeString = process["type"].asString();
+				}
+				else
+				{
+					processVector[processEffectIndex].processTypeString = process["procType"].asString();
+				}
 
 				if(processVector[processEffectIndex].processTypeString.compare("delayb") == 0)
 					processVector[processEffectIndex].processTypeInt = 0;
@@ -399,12 +397,18 @@ using namespace std;
 				else if(processVector[processEffectIndex].processTypeString.compare("waveshaperb") == 0)
 					processVector[processEffectIndex].processTypeInt = 6;
 
+				processVector[processEffectIndex].parentEffect = process["parentEffect"].asString();
+				processVector[processEffectIndex].parentEffectIndex = parentEffectIndex;
 #if(dbg >= 2)
+				cout << "processEffectIndex: " << processEffectIndex << endl;
+				cout << "parentEffect: " << processVector[processEffectIndex].parentEffect << endl;
+				cout << "parentEffectIndex: " << processVector[processEffectIndex].parentEffectIndex << endl;
+				cout << "processEffectIndex: " << processVector[processEffectIndex].processEffectIndex << endl;
+				cout << "processName: " << processVector[processEffectIndex].processName << endl;
+				cout << "processTypeString: " << processVector[processEffectIndex].processTypeString << endl;
 				cout << "processTypeInt: " << processVector[processEffectIndex].processTypeInt << endl;
 #endif
 
-				processVector[processEffectIndex].parentEffect = process["parentEffect"].asString();
-				processVector[processEffectIndex].parentEffectIndex = parentEffectIndex;
 
 				try
 				{
@@ -418,6 +422,7 @@ using namespace std;
 
 				processVector[processEffectIndex].footswitchType = process["footswitchType"].asString();
 #if(dbg >= 2)
+				processVector[processEffectIndex].footswitchType = process["footswitchType"].asString();
 					cout << "footswitchNumber: " << processVector[processEffectIndex].footswitchNumber << endl;
 #endif
 
@@ -432,12 +437,16 @@ using namespace std;
 					int inputArrayIndex = input["index"].asUInt();
 					inputVector[inputArrayIndex].parentObjectName = process["name"].asString();
 					inputVector[inputArrayIndex].connectorName = input["name"].asString();
-#if(dbg >= 2)
-					cout << "input name: " << tempInputArray[inputArrayIndex].connectorName << endl;
-#endif
 					inputVector[inputArrayIndex].connectorIndex = inputArrayIndex;
 					inputVector[inputArrayIndex].connectedBufferIndex = 58; // dummy input buffer
 					processVector[processEffectIndex].inputVector = inputVector;
+#if(dbg >= 2)
+					cout << "inputArrayIndex: " << inputArrayIndex << endl;
+					cout << "parentObjectName: " << inputVector[inputArrayIndex].parentObjectName << endl;
+					cout << "connectorIndex: " << inputVector[inputArrayIndex].connectorIndex << endl;
+					cout << "connectedBufferIndex: " << inputVector[inputArrayIndex].connectedBufferIndex << endl; // dummy input buffer
+					cout << "input name: " << inputVector[inputArrayIndex].connectorName << endl;
+#endif
 				}
 #if 0
 				for(auto & input : tempInputArray)
@@ -455,12 +464,17 @@ using namespace std;
 					int outputArrayIndex = output["index"].asUInt();
 					outputVector[outputArrayIndex].parentObjectName = process["name"].asString();
 					outputVector[outputArrayIndex].connectorName =  output["name"].asString();
-#if(dbg >= 2)
-					cout << "output name: " << tempOutputArray[outputArrayIndex].connectorName << endl;
-#endif
 					outputVector[outputArrayIndex].connectorIndex = outputArrayIndex;
 					outputVector[outputArrayIndex].connectedBufferIndex = 59; // dummy output buffer
 					processVector[processEffectIndex].outputVector = outputVector;
+#if(dbg >= 2)
+					cout << "outputArrayIndex: " << outputArrayIndex << endl;
+					cout << "parentObjectName: " << outputVector[outputArrayIndex].parentObjectName << endl;
+					cout << "connectorName: " << outputVector[outputArrayIndex].connectorName << endl;
+					cout << "connectorIndex: " << outputVector[outputArrayIndex].connectorIndex << endl;
+					cout << "connectedBufferIndex: " << outputVector[outputArrayIndex].connectedBufferIndex << endl;
+					cout << "connectorName: " << outputVector[outputArrayIndex].connectorName << endl;
+#endif
 				}
 #if 0
 				for(auto & output : tempOutputArray)
@@ -483,15 +497,30 @@ using namespace std;
 					paramVector[paramArrayIndex].paramConnector.connectedBufferIndex = 59; //"dummy" buffer index for
 
 					paramVector[paramArrayIndex].paramControlType = parameter["paramContType"].asString();
+					if(parameter["type"].asString().empty() == false)
+					{
+						try
+						{
+							paramVector[paramArrayIndex].paramType = parameter["type"].asInt();
+						}
+						catch(std::exception &e)
+						{
+							paramVector[paramArrayIndex].paramType =  atoi(parameter["type"].asString().c_str());
+						}
+					}
+					else
+					{
 
-					try
-					{
-						paramVector[paramArrayIndex].paramType = parameter["type"].asInt();
+						try
+						{
+							paramVector[paramArrayIndex].paramType = parameter["paramType"].asInt();
+						}
+						catch(std::exception &e)
+						{
+							paramVector[paramArrayIndex].paramType =  atoi(parameter["paramType"].asString().c_str());
+						}
 					}
-					catch(std::exception &e)
-					{
-						paramVector[paramArrayIndex].paramType =  atoi(parameter["type"].asString().c_str());
-					}
+
 
 					try
 					{
@@ -502,8 +531,16 @@ using namespace std;
 						paramVector[paramArrayIndex].valueIndex =  atoi(parameter["value"].asString().c_str());
 					}
 #if(dbg >= 2)
-					cout << "parameter name: " << paramVector[paramArrayIndex].paramConnector.connectorName << ":";
-					cout << paramVector[paramArrayIndex].valueIndex << endl;
+					cout << "paramArrayIndex: " << paramArrayIndex << endl;
+					cout << "paramType: " << paramVector[paramArrayIndex].paramType  << endl;
+					cout << "connectorName: " << paramVector[paramArrayIndex].paramConnector.connectorName << endl;
+					cout << "parentObjectName: " << paramVector[paramArrayIndex].paramConnector.parentObjectName << endl;
+
+					cout << "connectorIndex: " << paramVector[paramArrayIndex].paramConnector.connectorIndex << endl;
+					cout << "connectedBufferIndex: " << paramVector[paramArrayIndex].paramConnector.connectedBufferIndex << endl;
+
+					cout << "paramControlType: " << paramVector[paramArrayIndex].paramControlType << endl;
+					cout << "valueIndex: " << paramVector[paramArrayIndex].valueIndex << endl;
 #endif
 					processVector[processEffectIndex].paramVector = paramVector;
 				}
@@ -514,16 +551,19 @@ using namespace std;
 
 				}
 #endif
-
 			}
 		}
 		catch(exception &e)
 		{
-			 cout << "exception in ComboDataInt::loadProcessStructVectorFromJsonProcessArray: " << causeOfException << ":" << e.what() <<  endl;
+			 cout << "exception in ComboDataInt::" << __func__ << ": " << causeOfException << ":" << e.what() <<  endl;
 			status = -1;
 		}
+#if(dbg >= 3)
+			this->printProcessStructVector(false,processVector);
+#endif
+
 #if(dbg >= 1)
-		 cout << "***** EXITING ComboDataInt::loadProcessStructVectorFromJsonProcessArray: " << status << endl;
+		 cout << "***** EXITING ComboDataInt::" << __func__ << ": " << status << endl;
 #endif
 
 		return processVector;
@@ -535,7 +575,7 @@ using namespace std;
 	vector<ProcessSignalConnection>  ComboDataInt::loadProcessConnectionStructVectorFromJsonConnectionArray(Json::Value connectionArray)
 	{
 #if(dbg >= 1)
-		 cout << "*****ENTERING ComboDataInt::loadProcessConnectionStructVectorFromJsonConnectionArray" << endl;
+		 cout << "*****ENTERING ComboDataInt::" << __func__ << endl;
 #endif
 
 		int status = 0;
@@ -572,12 +612,12 @@ using namespace std;
 		}
 		catch(exception &e)
 		{
-			 cout << "exception in ComboDataInt::loadProcessConnectionStructVectorFromJsonConnectionArray: " << e.what() <<  endl;
+			 cout << "exception in ComboDataInt::" << __func__ << ": " << e.what() <<  endl;
 			status = -1;
 		}
 
 #if(dbg >= 1)
-		 cout << "***** EXITING ComboDataInt::loadProcessConnectionStructVectorFromJsonConnectionArray: " << status << endl;
+		 cout << "***** EXITING ComboDataInt::" << __func__ << ": " << status << endl;
 #endif
 
 		return processConnVector;
@@ -587,7 +627,7 @@ using namespace std;
 	vector<Control>  ComboDataInt::loadControlStructVectorFromJsonControlArray(int parentEffectIndex, string parentEffectAbbr, Json::Value controlArray)
 	{
 #if(dbg >= 1)
-		 cout << "*****ENTERING ComboDataInt::loadControlStructVectorFromJsonControlArray" << endl;
+		 cout << "*****ENTERING ComboDataInt::" << __func__ << endl;
 #endif
 
 #if(dbg >= 3)
@@ -612,6 +652,14 @@ using namespace std;
 				controlVector[controlEffectIndex].parentEffectAbbr = parentEffectAbbr;
 				controlVector[controlEffectIndex].parentEffectIndex = parentEffectIndex;
 				controlVector[controlEffectIndex].conType = control["type"].asString();
+				if(control["type"].asString().empty() == false)
+				{
+					controlVector[controlEffectIndex].conType = control["type"].asString();
+				}
+				else
+				{
+					controlVector[controlEffectIndex].conType = control["procType"].asString();
+				}
 
 				if(controlVector[controlEffectIndex].conType.compare("norm") == 0)
 					controlVector[controlEffectIndex].conTypeInt = 0;
@@ -645,7 +693,15 @@ using namespace std;
 					controlParamVector[contParamIndex].name = controlParam["alias"].asString();
 					controlParamVector[contParamIndex].alias = controlParam["alias"].asString();
 					controlParamVector[contParamIndex].abbr = controlParam["abbr"].asString();
-					controlParamVector[contParamIndex].paramType = controlParam["type"].asUInt();
+
+					if(controlParam["type"].asString().empty() == false)
+					{
+						controlParamVector[contParamIndex].paramType = controlParam["type"].asUInt();
+					}
+					else
+					{
+						controlParamVector[contParamIndex].paramType = controlParam["paramType"].asUInt();
+					}
 					controlParamVector[contParamIndex].controlledParamType = controlParam["controlledParamType"].asUInt();
 					controlParamVector[contParamIndex].inheritControlledParamType = controlParam["inheritControlledParamType"].asBool();
 					controlParamVector[contParamIndex].cvEnabled = controlParam["controlVoltageEnabled"].asBool();
@@ -672,11 +728,11 @@ using namespace std;
 		}
 		catch(exception &e)
 		{
-			 cout << "exception in ComboDataInt::loadControlStructVectorFromJsonControlArray: " << e.what() <<  endl;
+			 cout << "exception in ComboDataInt::" << __func__ << ": " << e.what() <<  endl;
 			status = -1;
 		}
 #if(dbg >= 1)
-		 cout << "***** EXITING ComboDataInt::loadControlStructVectorFromJsonControlArray: " << status << endl;
+		 cout << "***** EXITING ComboDataInt::" << __func__ << ": " << status << endl;
 #endif
 
 		return controlVector;
@@ -686,7 +742,7 @@ using namespace std;
 	vector<ProcessParameterControlConnection>  ComboDataInt::loadControlConnectionStructVectorFromJsonControlConnectionArray(Json::Value controlConnectionArray)
 	{
 #if(dbg >= 1)
-		 cout << "*****ENTERING ComboDataInt::loadControlConnectionStructVectorFromJsonControlConnectionArray" << endl;
+		 cout << "*****ENTERING ComboDataInt::" << __func__ << endl;
 #endif
 		int status = 0;
 #if(dbg >= 3)
@@ -696,7 +752,6 @@ using namespace std;
 
 		try
 		{
-			//int controlConnectionCount = controlConnectionArray.size();
 			for(auto & controlConnection : controlConnectionArray)
 			{
 				ProcessParameterControlConnection tempContConnection;
@@ -716,13 +771,13 @@ using namespace std;
 		}
 		catch(exception &e)
 		{
-			 cout << "exception in ComboDataInt::loadControlConnectionStructVectorFromJsonControlConnectionArray: " << e.what() <<  endl;
+			 cout << "exception in ComboDataInt::" << __func__ << ": " << e.what() <<  endl;
 			status = -1;
 
 		}
 
 #if(dbg >= 1)
-		 cout << "***** EXITING ComboDataInt::loadControlConnectionStructVectorFromJsonControlConnectionArray: " << status << endl;
+		 cout << "***** EXITING ComboDataInt::" << __func__ << ": " << status << endl;
 #endif
 
 		return controlConnVector;
@@ -734,7 +789,7 @@ using namespace std;
 	int ComboDataInt::loadEffectComboJsonFromFile(string comboName)
 	{
 #if(dbg >= 1)
-		cout << "*****ENTERING ComboDataInt::loadEffectComboJsonFromFile" << endl;
+		cout << "*****ENTERING ComboDataInt::" << __func__ << endl;
 		cout << "comboName: " << comboName << endl;
 #endif
 		int status = 0;
@@ -829,13 +884,13 @@ using namespace std;
 		}
 		catch(exception &e)
 		{
-			cout << "exception in ComboDataInt::loadEffectComboJsonFromFile: " << e.what() <<  endl;
+			cout << "exception in ComboDataInt::" << __func__ << ": " << e.what() <<  endl;
 			status = -1;
 		}
 
 
 #if(dbg >= 1)
-		cout << "***** EXITING ComboDataInt::loadEffectComboJsonFromFile: " << status << endl;
+		cout << "***** EXITING ComboDataInt::" << __func__ << ": " << status << endl;
 #endif
 
 
@@ -846,7 +901,7 @@ using namespace std;
 	int ComboDataInt::loadEffectComboJson(string comboData)
 	{
 #if(dbg >= 1)
-		cout << "*****ENTERING ComboDataInt::loadEffectComboJson" << endl;
+		cout << "*****ENTERING ComboDataInt::" << __func__ << endl;
 
 #endif
 		int status = 0;
@@ -917,13 +972,13 @@ using namespace std;
 		}
 		catch(exception &e)
 		{
-			cout << "exception in ComboDataInt::loadEffectComboJson: " << e.what() <<  endl;
+			cout << "exception in ComboDataInt::" << __func__ << ": " << e.what() <<  endl;
 			status = -1;
 		}
 
 
 #if(dbg >= 1)
-		cout << "***** EXITING ComboDataInt::loadEffectComboJson: " << status << endl;
+		cout << "***** EXITING ComboDataInt::" << __func__ << ": " << status << endl;
 #endif
 
 
@@ -936,7 +991,7 @@ using namespace std;
 	int  ComboDataInt::loadComboJsonFileStructFromEffectComboJson(void)
 	{
 #if(dbg >= 1)
-		 cout << "*****ENTERING ComboDataInt::loadComboJsonFileStructFromEffectComboJson" << endl;
+		 cout << "*****ENTERING ComboDataInt::" << __func__ << endl;
 #endif
 		int status = 0;
 
@@ -948,7 +1003,9 @@ using namespace std;
 				this->comboName = this->comboFileStruct.name;
 			}
 
+#if(dbg >= 1)
 			cout << "comboName: " << this->comboName << endl;
+#endif
 			vector<Control> tempContStructVector;
 			vector<ProcessParameterControlConnection> tempContConnStructVector;
 			Json::Value effectArray = this->effectComboJson["effectArray"];
@@ -998,11 +1055,11 @@ using namespace std;
 		}
 		catch(exception &e)
 		{
-			 cout << "exception in ComboDataInt::loadComboJsonFileStructFromEffectComboJson: " << e.what() <<  endl;
+			 cout << "exception in ComboDataInt::" << __func__ << ": " << e.what() <<  endl;
 			status = -1;
 		}
 #if(dbg >= 1)
-		 cout << "***** EXITING ComboDataInt::loadComboJsonFileStructFromEffectComboJson: " << status << endl;
+		 cout << "***** EXITING ComboDataInt::" << __func__ << ": " << status << endl;
 #endif
 
 
@@ -1013,7 +1070,7 @@ using namespace std;
 	int ComboDataInt::loadUnsortedProcessStructVectorFromComboJsonFileStruct(void)
 	{
 #if(dbg >= 1)
-		 cout << "*****ENTERING ComboDataInt::loadUnsortedProcessStructVectorFromComboJsonFileStruct" << endl;
+		 cout << "*****ENTERING ComboDataInt::" << __func__ << endl;
 #endif
 		int status = 0;
 		this->unsortedProcessStructVector.clear();
@@ -1023,8 +1080,6 @@ using namespace std;
 
 			for(auto & effect : this->comboFileStruct.effectArray)
 			{
-				//int processCount = effect.processVector.size();
-
 				for(auto & process : effect.processVector)
 				{
 					this->unsortedProcessStructVector.push_back(process);
@@ -1036,20 +1091,20 @@ using namespace std;
 		}
 		catch(exception &e)
 		{
-			 cout << "exception in ComboDataInt::loadUnsortedProcessStructVectorFromComboJsonFileStruct: " << e.what() <<  endl;
+			 cout << "exception in ComboDataInt::" << __func__ << ": " << e.what() <<  endl;
 			status = -1;
 		}
 #if(dbg >= 1)
-		 cout << "***** EXITING ComboDataInt::loadUnsortedProcessStructVectorFromComboJsonFileStruct: " << status << endl;
+		 cout << "***** EXITING ComboDataInt::" << __func__ << ": " << status << endl;
 #endif
 		return status;
 	}
 
-
+#define dbg 0
 	int ComboDataInt::loadUnmergedSubconnectionStructVectorFromComboJsonFileStruct(void)
 	{
 #if(dbg >= 1)
-		 cout << "*****ENTERING ComboDataInt::loadUnmergedSubconnectionStructVectorFromComboJsonFileStruct" << endl;
+		 cout << "*****ENTERING ComboDataInt::" << __func__ << endl;
 #endif
 		int status = 0;
 		this->unmergedProcessSubconnectionStructVector.clear();
@@ -1061,7 +1116,6 @@ using namespace std;
 			{
 				vector<ProcessSignalConnection> procConnVector =
 								effect.processConnectionVector;
-				//int procConnCount = procConnVector.size();
 				for(auto & processSubConnection : procConnVector)
 				{
 					this->unmergedProcessSubconnectionStructVector.push_back(processSubConnection);
@@ -1098,12 +1152,12 @@ using namespace std;
 		}
 		catch(exception &e)
 		{
-			 cout << "exception in ComboDataInt::loadUnmergedSubconnectionStructVectorFromComboJsonFileStruct: " << e.what() <<  endl;
+			 cout << "exception in ComboDataInt::" << __func__ << ": " << e.what() <<  endl;
 			status = -1;
 		}
 
 #if(dbg >= 1)
-		 cout << "***** EXITING ComboDataInt::loadUnmergedSubconnectionStructVectorFromComboJsonFileStruct: " << status << endl;
+		 cout << "***** EXITING ComboDataInt::" << __func__ << ": " << status << endl;
 #endif
 		return status;
 	}
@@ -1116,7 +1170,7 @@ using namespace std;
 	{
 
 #if(dbg >= 1)
-		 cout << "***** ENTERING: ComboDataInt::mergeUnmergedSubconnectionsAndLoadIntoUnsortedConnectionStructVector" << endl;
+		 cout << "***** ENTERING: ComboDataInt::" << __func__ << endl;
 #endif
 		int status = 0;
 
@@ -1160,7 +1214,6 @@ using namespace std;
 				for(auto & effect : this->comboFileStruct.effectArray)
 				{
 					vector<Process> tempProcVector = effect.processVector;
-					//int procCount = tempProcVector.size();
 					for(auto & process : effect.processVector)
 					{
 						vector<Connector> tempInputVector = process.inputVector;
@@ -1256,14 +1309,14 @@ using namespace std;
 			}
 			catch (exception &e)
 			{
-				 cout << "exception in ComboDataInt::mergeUnmergedSubconnectionsAndLoadIntoUnsortedConnectionStructVector: " << e.what() <<  endl;
+				 cout << "exception in ComboDataInt::" << __func__ << ": " << e.what() <<  endl;
 				status = -1;
 			}
 		}
 		else status = -1;
 
 #if(dbg >= 1)
-		 cout << "***** EXITING: ComboDataInt::mergeUnmergedSubconnectionsAndLoadIntoUnsortedConnectionStructVector: " << status << endl;
+		 cout << "***** EXITING: ComboDataInt::" << __func__ << ": " << status << endl;
 #endif
 		return status;
 	}
@@ -1273,11 +1326,10 @@ using namespace std;
 	int ComboDataInt::getTargetProcessIndex(string processName)
 	{
 #if(dbg >= 1)
-		 cout << "***** ENTERING: ComboDataInt::getTargetProcessIndex" << endl;
+		 cout << "***** ENTERING: ComboDataInt::" << __func__ << endl;
 		 cout << "processName: " << processName << endl;
 #endif
 		int targetProcessIndex = 0;
-		// get index for target process
 #if(dbg >=2)
 		 cout << "process to search for index of: " << processName << endl;
 #endif
@@ -1312,7 +1364,7 @@ using namespace std;
 #endif
 
 #if(dbg >= 1)
-		 cout << "***** EXITING: ComboDataInt::getTargetProcessIndex: " << targetProcessIndex << endl;
+		 cout << "***** EXITING: ComboDataInt::" << __func__ << ": " << targetProcessIndex << endl;
 #endif
 		return targetProcessIndex;
 	}
@@ -1321,7 +1373,7 @@ using namespace std;
 	std::vector<string> ComboDataInt::getProcessInputs(string processName)
 	{
 #if(dbg >= 1)
-		 cout << "***** ENTERING: ComboDataInt::getProcessInputs" << endl;
+		 cout << "***** ENTERING: ComboDataInt::" << __func__ << endl;
 		 cout << "processName: " << processName << endl;
 #endif
 		std::vector<string> inputs;
@@ -1340,7 +1392,7 @@ using namespace std;
 #endif
 
 #if(dbg >= 1)
-		 cout << "***** EXITING: ComboDataInt::getProcessInputs: " << inputs.size() << endl;
+		 cout << "***** EXITING: ComboDataInt::" << __func__ << ": " << inputs.size() << endl;
 #endif
 
 		return inputs;
@@ -1350,7 +1402,7 @@ using namespace std;
 	std::vector<string> ComboDataInt::getFirstProcesses()
 	{
 #if(dbg >= 1)
-		 cout << "***** ENTERING: ComboDataInt::getFirstProcesses" << endl;
+		 cout << "***** ENTERING: ComboDataInt::" << __func__ << endl;
 #endif
 		Connector start;
 		start.parentObjectName = "system";
@@ -1391,12 +1443,12 @@ using namespace std;
 		}
 		catch(exception &e)
 		{
-			cout << "exception in ComboDataInt::getFirstProcesses: " << e.what() << endl;
+			cout << "exception in ComboDataInt::" << __func__ << ": " << e.what() << endl;
 		}
 
 
 #if(dbg >= 1)
-		 cout << "***** EXITING: ComboDataInt::getFirstProcesses: ";
+		 cout << "***** EXITING: ComboDataInt::" << __func__;
 		for(std::vector<string>::size_type i = 0; i < firstProcesses.size(); i++)
 		{
 			 cout << firstProcesses[i] << ", ";
@@ -1412,7 +1464,7 @@ using namespace std;
 	std::vector<string> ComboDataInt::getNextProcesses()
 	{
 #if(dbg >= 1)
-		 cout << "***** ENTERING: ComboDataInt::getNextProcesses" << endl;
+		 cout << "***** ENTERING: ComboDataInt::" << __func__ << endl;
 #endif
 		std::vector<string> nextProcesses;
 		bool foundNextProcesses = false;
@@ -1478,7 +1530,7 @@ using namespace std;
 		 * status = 0: no inputs satisfied
 		 */
 #if(dbg >= 1)
-		 cout << "***** ENTERING: ComboDataInt::areAllProcessInputsSatisfied" << endl;
+		 cout << "***** ENTERING: ComboDataInt::" << __func__ << endl;
 		 cout << "processName: " << processName << endl;
 #endif
 
@@ -1520,8 +1572,6 @@ using namespace std;
 			}
 		}
 
-		//int connectionsCount = connections.size();
-
 		for(auto & connection : connections)
 		{
 			for(auto & dataReadyConn : this->dataReadyVector)
@@ -1546,11 +1596,11 @@ using namespace std;
 		}
 		catch(exception &e)
 		{
-			cout << "exception in ComboDataInt::areAllProcessInputsSatisfied: " << e.what() << endl;
+			cout << "exception in ComboDataInt::" << __func__ << ": " << e.what() << endl;
 		}
 
 #if(dbg >= 1)
-		 cout << "***** EXITING: ComboDataInt::areAllProcessInputsSatisfied:" << status << endl;
+		 cout << "***** EXITING: ComboDataInt::" << __func__ << ": " << status << endl;
 #endif
 
 		return status;
@@ -1563,7 +1613,7 @@ using namespace std;
 #if(dbg >= 1)
 
 		{
-			cout << "***** ENTERING: ComboDataInt::addOutputConnectionsToDataReadyVector" << endl;
+			cout << "***** ENTERING: ComboDataInt::" << __func__ << endl;
 			for(auto & name : processNames)
 			{
 				cout << name << ", ";
@@ -1608,7 +1658,7 @@ using namespace std;
 #endif
 
 #if(dbg >= 1)
-		 cout << "***** EXITING: ComboDataInt::addOutputConnectionsToDataReadyVector: " << status << endl;
+		 cout << "***** EXITING: ComboDataInt::" << __func__ << ": " << status << endl;
 #endif
 		return status;
 	}
@@ -1622,7 +1672,7 @@ using namespace std;
 		{
 
 		}
-		cout << "***** ENTERING: ComboDataInt::transferProcessStructsToSortedProcessStructVector" << endl;
+		cout << "***** ENTERING: ComboDataInt::" << __func__ << endl;
 		for(auto & name : processNames)
 		{
 			cout << name << ", ";
@@ -1670,12 +1720,12 @@ using namespace std;
 		}
 		catch(std::exception &e)
 		{
-			 cout << "exception in transferProcessStructsToSortedProcessStructVector " << e.what() <<  endl;
+			 cout << "exception in " << __func__ << ": " << e.what() <<  endl;
 			status = -1;
 		}
 
 #if(dbg >= 1)
-		 cout << "***** EXITING: ComboDataInt::transferProcessStructsToSortedProcessStructVector: " << status << endl;
+		 cout << "***** EXITING: ComboDataInt::" << __func__ << ": " << status << endl;
 #endif
 		return status;
 	}
@@ -1687,7 +1737,7 @@ using namespace std;
 		bool isListEmpty;
 
 #if(dbg >= 1)
-		 cout << "***** ENTERING: ComboDataInt::isUnsequencedProcessStructVectorEmpty" << endl;
+		 cout << "***** ENTERING: ComboDataInt::" << __func__ << endl;
 #endif
 
 		if(this->unsortedProcessStructVector.size() == 0) isListEmpty = true;
@@ -1698,7 +1748,7 @@ using namespace std;
 #endif
 
 #if(dbg >= 1)
-		 cout << "***** EXITING: ComboDataInt::isUnsequencedProcessStructVectorEmpty: " << isListEmpty << endl;
+		 cout << "***** EXITING: ComboDataInt::" << __func__ << ": " << isListEmpty << endl;
 #endif
 		return isListEmpty;
 	}
@@ -1708,7 +1758,7 @@ using namespace std;
 	{
 		bool inList = false;
 #if(dbg >= 1)
-		 cout << "***** ENTERING: ComboDataInt::isOutputInDataReadyVector" << endl;
+		 cout << "***** ENTERING: ComboDataInt::" << __func__ << endl;
 		 cout << "Connector process: " << output.parentObjectName << "\t connector: " << output.connectorName << endl;
 #endif
 			try
@@ -1727,12 +1777,12 @@ using namespace std;
 			}
 			catch(exception &e)
 			{
-				cout << "exception in ComboDataInt::isOutputInDataReadyVector: " << e.what() << endl;
+				cout << "exception in ComboDataInt::" << __func__ << ": " << e.what() << endl;
 			}
 
 
 #if(dbg >= 1)
-		 cout << "***** EXITING: ComboDataInt::isOutputInDataReadyVector: " << inList << endl;
+		 cout << "***** EXITING: ComboDataInt::" << __func__ << ": " << inList << endl;
 #endif
 
 		return inList;
@@ -1746,7 +1796,7 @@ using namespace std;
 #if(dbg >= 1)
 
 		{
-			cout << "ComboDataInt::mergeConnections" << endl;
+			cout << "ComboDataInt::" << __func__ << endl;
 			cout << "srcConn: " << srcConn.srcProcessOutputConnector.parentObjectName << ":" << srcConn.srcProcessOutputConnector.connectorName << ">"
 							<< srcConn.destProcessInputConnector.parentObjectName << ":" << srcConn.destProcessInputConnector.connectorName << " & ";
 			cout << "destConn: " << destConn.srcProcessOutputConnector.parentObjectName << ":" << destConn.srcProcessOutputConnector.connectorName << ">"
@@ -1763,7 +1813,7 @@ using namespace std;
 #if(dbg >= 1)
 
 		{
-			cout << "***** EXITING: ComboDataInt::mergeConnections: ";
+			cout << "***** EXITING: ComboDataInt::" << __func__ << ": ";
 			cout << "mergeConnection: " << mergedConnection.srcProcessOutputConnector.parentObjectName << ":" << mergedConnection.srcProcessOutputConnector.connectorName << ">"
 							<< mergedConnection.destProcessInputConnector.parentObjectName << ":" << mergedConnection.destProcessInputConnector.connectorName << endl;
 		}
@@ -1791,7 +1841,7 @@ using namespace std;
 	int ComboDataInt::sortUnsortedProcessStructsIntoSortedProcessStructVector()
 	{
 #if(dbg >= 1)
-		 cout << "*****ENTERING ComboDataInt::sortUnsortedProcessStructsIntoSortedProcessStructVector" << endl;
+		 cout << "*****ENTERING ComboDataInt::" << __func__ << endl;
 #endif
 		int status = 0;
 		int  breakLoopCount = 0;
@@ -1890,13 +1940,13 @@ using namespace std;
 		}
 		catch(std::exception &e)
 		{
-			 cout << "exception in sortUnsortedProcessStructsIntoSortedProcessStructVector: " << e.what() <<  endl;
+			 cout << "exception in " << __func__ << ": " << e.what() <<  endl;
 			return -1;
 		}
 
 		// Create IndexedProcessParameter vector here
 #if(dbg >= 1)
-		 cout << "***** EXITING ComboDataInt::sortUnsortedProcessStructsIntoSortedProcessStructVector: " << status << endl;
+		 cout << "***** EXITING ComboDataInt::" << __func__ << ": " << status << endl;
 #endif
 
 		return status;
@@ -1908,7 +1958,7 @@ using namespace std;
 	{
 		int status = 0;
 #if(dbg >= 1)
-		 cout << "*****ENTERING ComboDataInt::sortUnsortedConnectionStructsIntoSortedConnectionStructVector" << endl;
+		 cout << "*****ENTERING ComboDataInt::" << __func__ << endl;
 #endif
 
 		try
@@ -1941,11 +1991,11 @@ using namespace std;
 		}
 		catch(std::exception &e)
 		{
-			 cout << "exception in sortUnsortedConnectionStructsIntoSortedConnectionStructVector: " << e.what() <<  endl;
+			 cout << "exception in " << __func__ << ": " << e.what() <<  endl;
 			status = -1;
 		}
 #if(dbg >= 1)
-		 cout << "***** EXITING ComboDataInt::sortUnsortedConnectionStructsIntoSortedConnectionStructVector: " << status << endl;
+		 cout << "***** EXITING ComboDataInt::" << __func__ << ": " << status << endl;
 #endif
 		return status;
 	}
@@ -1955,7 +2005,7 @@ using namespace std;
 	{
 		int status = 0;
 #if(dbg >= 1)
-		 cout << "*****ENTERING ComboDataInt::loadSortedControlStructVectorFromComboJsonFileStruct" << endl;
+		 cout << "*****ENTERING ComboDataInt::" << __func__ << endl;
 #endif
 		int absControlIndex = 0;
 		int effectIndex = 0;
@@ -1974,11 +2024,6 @@ using namespace std;
 					this->sortedControlStructVector.push_back(processParamControl);
 					absControlIndex++;
 				}
-
-				/*processParamControl.controlEffectIndex = controlEffectIndex;
-				processParamControl.parentEffectIndex = effectIndex;*/
-
-				//controlEffectIndex++;
 			}
 
 			this->controlCount = this->sortedControlStructVector.size();
@@ -1988,12 +2033,12 @@ using namespace std;
 		}
 		catch(exception &e)
 		{
-			 cout << "exception in loadSortedControlStructVectorFromComboJsonFileStruct: " << e.what() <<  endl;
+			 cout << "exception in " << __func__ << ": " << e.what() <<  endl;
 			status = -1;
 		}
 
 #if(dbg >= 1)
-		 cout << "***** EXITING ComboDataInt::loadSortedControlStructVectorFromComboJsonFileStruct: " << status << endl;
+		 cout << "***** EXITING ComboDataInt::" << __func__ << ": " << status << endl;
 #endif
 		return status = 0;
 	}
@@ -2004,7 +2049,7 @@ using namespace std;
 	{
 		int status = 0;
 #if(dbg >= 1)
-		 cout << "***** ENTERING: ComboDataInt::loadSortedControlConnectionStructVectorFromComboJsonFileStruct" << endl;
+		 cout << "***** ENTERING: ComboDataInt::" << __func__ << endl;
 #endif
 		string process;
 		string effectString;
@@ -2032,7 +2077,7 @@ using namespace std;
 		}
 		catch(exception &e)
 		{
-			 cout << "exception in loadSortedControlConnectionStructVectorFromComboJsonFileStruct: " << e.what() <<  endl;
+			 cout << "exception in " << __func__ << ": " << e.what() <<  endl;
 			status = -1;
 		}
 
@@ -2041,7 +2086,7 @@ using namespace std;
 #endif
 
 #if(dbg >= 1)
-		 cout << "***** EXITING: ComboDataInt::loadSortedControlConnectionStructVectorFromComboJsonFileStruct: " << status << endl;
+		 cout << "***** EXITING: ComboDataInt::" << __func__ << ": " << status << endl;
 #endif
 		return status;
 	}
@@ -2053,7 +2098,7 @@ using namespace std;
 	int ComboDataInt::setProcBufferArrayOutputAndInputConnectorStructsUsingSortedConnectionStructVectorAndDataReadyVector()
 	{
 #if(dbg >= 1)
-		 cout << "***** ENTERING: ComboDataInt::setProcBufferArrayOutputAndInputConnectorStructsUsingUnsortedConnectionStructVector" << endl;
+		 cout << "***** ENTERING: ComboDataInt::" << __func__ << endl;
 #endif
 		int status = 0;
 		try
@@ -2065,20 +2110,12 @@ using namespace std;
 			int procSigBufferIndex = 0;
 			for(auto & dataReady : this->dataReadyVector)
 			{
-				// set buffer source process to object in dataReadyVector. This could be a process output or
-				// a system output (i.e. capture_1 or capture_2)
 				this->comboStruct.processSignalBufferArray[procSigBufferIndex].srcProcessOutputConnector = dataReady;
 				procSigBufferIndex++;
 			}
 
 			for(auto & procSignalBuffer : this->comboStruct.processSignalBufferArray)
 			{
-
-				// for getting inputs, loop through sortedProcessConnectionStructVector inside  processSignalBufferArray loop.
-				// Compare processSignalBufferArray.srcProcessOutputConnector connection with src connection in sortedProcessConnectionStructVector, and if a
-				// match if found push sortedProcessConnectionStructVector dest connection into processSignalBufferArray
-				// destProcessInputConnectorVector.
-
 
 				for(auto & processConnection : this->sortedProcessConnectionStructVector)
 				{
@@ -2099,9 +2136,7 @@ using namespace std;
 						procSignalBuffer.destProcessInputConnectorVector.push_back(processConnection.destProcessInputConnector);
 
 					}
-
 				}
-
 			}
 
 	#if(dbg >= 2)
@@ -2111,12 +2146,12 @@ using namespace std;
 		}
 		catch(exception &e)
 		{
-			cout << "exception in ComboDataInt::setProcBufferArrayOutputAndInputConnectorStructsUsingSortedConnectionStructVectorAndDataReadyVector: " << e.what() << endl;
+			cout << "exception in ComboDataInt::" << __func__ << ": " << e.what() << endl;
 		}
 
 
 #if(dbg >= 1)
-		 cout << "***** EXITING: ComboDataInt::setProcBufferArrayOutputAndInputConnectionsUsingSortedConnectionStructVector: " << status << endl;
+		 cout << "***** EXITING: ComboDataInt::" << __func__ << ": " << status << endl;
 #endif
 
 		return status;
@@ -2127,7 +2162,7 @@ using namespace std;
 	int ComboDataInt::setConnectedBufferIndexesInSortedProcessStructProcessIOVectorsUsingProcBufferArray()
 	{
 #if(dbg >= 1)
-		 cout << "***** ENTERING: ComboDataInt::setConnectedBufferIndexesInSortedProcessStructProcessIOVectorsUsingProcBufferArray" << endl;
+		 cout << "***** ENTERING: ComboDataInt::" << __func__ << endl;
 #endif
 		int status = 0;
 		// loop through sortedProcessStructVector
@@ -2167,16 +2202,10 @@ using namespace std;
 
 			for(auto & sortedProcess : this->sortedProcessStructVector)
 			{
-				//loop through procBufferArray
 				processSignalBufferIndex = 0;
 				for(auto & signalProcessBuffer : this->comboStruct.processSignalBufferArray)
 				{
 					if(signalProcessBuffer.srcProcessOutputConnector.parentObjectName == "") break;
-					//loop through procBuffer:destProcessVector inside sortedProcessStruct:inputVector loop
-					//and, if a match is found between sortedProcess name and procBuffer:destProcess:object
-					//, and sortedProcess:input:portName and procBuffer:destProcess:port, then
-					//set the sortedProcess:input:connectedBufferIndex to procBufferIndex
-					// and exit procBuffer:destProcessVector loop.
 
 					for(auto & procInput : sortedProcess.inputVector)
 					{
@@ -2193,42 +2222,18 @@ using namespace std;
 						}
 					}
 
-					//loop through sortedProcessStructVector outputVector and, if a match is found between
-					//sortedProcess name and procBuffer:srcProcess:object, and
-					//sortedProcess:output:portName and procBuffer:srcProcess:port, then
-					//set the sortedProcess:output:connectedBufferIndex to procBufferIndex.
 					for(auto & procOutput : sortedProcess.outputVector)
 					{
-
-						//for(auto & bufferInConn : signalProcessBuffer.destProcessInputConnectorVector)
+						if(this->compareConnectors(false, procOutput,
+								signalProcessBuffer.srcProcessOutputConnector) == true)
 						{
-							if(this->compareConnectors(false, procOutput,
-									signalProcessBuffer.srcProcessOutputConnector) == true)
-							{
-								procOutput.connectedBufferIndex = processSignalBufferIndex;
+							procOutput.connectedBufferIndex = processSignalBufferIndex;
 #if(dbg >= 2)
-								cout << procOutput.parentObjectName << ":" << procOutput.connectorName;
-								cout << " connected to buffer[" << processSignalBufferIndex << "]. "  << endl;
+							cout << procOutput.parentObjectName << ":" << procOutput.connectorName;
+							cout << " connected to buffer[" << processSignalBufferIndex << "]. "  << endl;
 #endif
-
-							}
 						}
 					}
-#if 0
-					for(vector<Connector>::size_type procOutputIndex = 0; procOutputIndex < sortedProcess.outputVector.size(); procOutputIndex++)
-					{
-						Connector outConn;
-						outConn.parentObjectName = sortedProcess.processName;
-						outConn.connectorName = sortedProcess.outputVector[procOutputIndex].connectorName;
-
-						if(this->compareConnectors(false, outConn,signalProcessBuffer.srcProcessOutputConnector) == true)
-						{
-							sortedProcess.outputVector[procOutputIndex].connectedBufferIndex =
-											signalProcessBufferIndex;
-							break;
-						}
-					}
-#endif
 					processSignalBufferIndex++;
 				}
 			}
@@ -2237,27 +2242,21 @@ using namespace std;
 			processSignalBufferIndex = 0;
 			for(auto & processSignalBuffer : this->comboStruct.processSignalBufferArray)
 			{
-
 				for(auto & bufferInConn : processSignalBuffer.destProcessInputConnectorVector)
 				{
 					if(this->compareConnectors(false, systemPlayback[0],bufferInConn) == true)
 					{
-
 						this->outputSystemBufferIndex[0] = processSignalBufferIndex;
 	#if(dbg >= 2)
 						cout << "system:playback_1 connected to buffer: " << this->outputSystemBufferIndex[0] << endl;
 	#endif
-
-
 					}
 					else if(this->compareConnectors(false, systemPlayback[1],bufferInConn) == true)
 					{
-
 						this->outputSystemBufferIndex[1] = processSignalBufferIndex;
 	#if(dbg >= 2)
 						cout << "system:playback_2 connected to buffer: " << this->outputSystemBufferIndex[1] << endl;
 	#endif
-
 					}
 				}
 				processSignalBufferIndex++;
@@ -2265,183 +2264,20 @@ using namespace std;
 		}
 		catch(exception &e)
 		{
-			cout << "exception in ComboDataInt::setConnectedBufferIndexesInSortedProcessStructProcessIOVectorsUsingProcBufferArray: " << e.what() << endl;
+			cout << "exception in ComboDataInt::" << __func__ << ": " << e.what() << endl;
 		}
 
 #if(dbg >= 3)
 		this->printProcessStructVector(true, this->sortedProcessStructVector);
 #endif
 #if(dbg >= 1)
-		 cout << "***** EXITING: ComboDataInt::setConnectedBufferIndexesInSortedProcessStructProcessIOVectorsUsingProcBufferArray: " << status << endl;
+		 cout << "***** EXITING: ComboDataInt::" << __func__ << ": " << status << endl;
 #endif
 		return status;
 	}
 
 
 
-#if 0
-
-#define dbg 0
-	int ComboDataInt::setConnectedBufferIndexesInSortedProcessStructProcessIOVectorsUsingProcBufferArray()
-	{
-#if(dbg >= 1)
-		 cout << "***** ENTERING: ComboDataInt::setConnectedBufferIndexesInSortedProcessStructProcessIOVectorsUsingProcBufferArray" << endl;
-#endif
-		int status = 0;
-		// loop through sortedProcessStructVector
-		try
-		{
-			Connector systemPlayback[2];
-			systemPlayback[0].parentObjectName = "system";
-			systemPlayback[1].parentObjectName = "system";
-			systemPlayback[0].connectorName = "playback_1";
-			systemPlayback[1].connectorName = "playback_2";
-			Connector systemCapture[2];
-			systemCapture[0].parentObjectName = "system";
-			systemCapture[1].parentObjectName = "system";
-			systemCapture[0].connectorName = "capture_1";
-			systemCapture[1].connectorName = "capture_2";
-
-			//for(auto & sortedProcess : this->sortedProcessStructVector)
-			{
-#if 0
-				//loop through procBufferArray
-				int signalProcessBufferIndex = 0;
-				for(auto & signalProcessBuffer : this->comboStruct.processSignalBufferArray)
-				{
-
-					for(vector<Connector>::size_type procOutputIndex = 0; procOutputIndex < sortedProcess.outputVector.size(); procOutputIndex++)
-					{
-						Connector outConn;
-						outConn.parentObjectName = signalProcessBuffer.srcProcessOutputConnector.parentObjectName;
-						outConn.connectorName = signalProcessBuffer.srcProcessOutputConnector.connectorName;
-
-						if(this->compareConnectors(false, systemCapture[0],signalProcessBuffer.srcProcessOutputConnector) == true)
-						{
-							this->inputSystemBufferIndex[0] = signalProcessBufferIndex;
-	#if(dbg >= 2)
-							cout << "system:capture_1 connected to buffer[" << this->inputSystemBufferIndex[0] << "] input. "  << endl;
-	#endif
-						}
-						else if(this->compareConnectors(false, systemCapture[1],signalProcessBuffer.srcProcessOutputConnector) == true)
-						{
-							this->inputSystemBufferIndex[1] = signalProcessBufferIndex;
-	#if(dbg >= 2)
-							cout << "system:capture_2 connected to buffer[" << this->inputSystemBufferIndex[1] << "] input. "  << endl;
-	#endif
-						}
-						signalProcessBufferIndex++;
-					}
-
-				}
-#endif
-				for(auto & sortedProcess : this->sortedProcessStructVector)
-				{
-					//loop through procBufferArray
-					int signalProcessBufferIndex = 0;
-					for(auto & signalProcessBuffer : this->comboStruct.processSignalBufferArray)
-					{
-
-
-						for(auto & procInput : sortedProcess.inputVector)
-						{
-							for(auto & destProcessInputConnector : signalProcessBuffer.destProcessInputConnectorVector)
-							{
-								if(this->compareConnectors(false,
-										destProcessInputConnector, procInput) == true)
-								{
-									procInput.connectedBufferIndex = signalProcessBufferIndex;
-	#if(dbg >= 2)
-									cout << procInput.parentObjectName << ":" << procInput.connectorName;
-									cout << " connected to buffer[" << signalProcessBufferIndex << "] output. "  << endl;
-	#endif
-									break;
-								}
-							}
-						}
-
-						for(vector<Connector>::size_type procOutputIndex = 0; procOutputIndex < sortedProcess.outputVector.size(); procOutputIndex++)
-						{
-							Connector outConn;
-							outConn.parentObjectName = sortedProcess.processName;
-							outConn.connectorName = sortedProcess.outputVector[procOutputIndex].connectorName;
-
-							if(this->compareConnectors(false, outConn,signalProcessBuffer.srcProcessOutputConnector) == true)
-							{
-								sortedProcess.outputVector[procOutputIndex].connectedBufferIndex =
-												signalProcessBufferIndex;
-	#if(dbg >= 2)
-								cout << outConn.parentObjectName << ":" << outConn.connectorName;
-
-								cout << " connected to buffer[" << signalProcessBufferIndex << "] input." <<  endl;
-	#endif
-								break;
-							}
-	#if(1)
-							if(this->compareConnectors(false, systemCapture[0],signalProcessBuffer.srcProcessOutputConnector) == true)
-							{
-								this->inputSystemBufferIndex[0] = signalProcessBufferIndex;
-		#if(dbg >= 2)
-								cout << "system:capture_1 connected to buffer[" << this->inputSystemBufferIndex[0] << "] input. "  << endl;
-		#endif
-							}
-							else if(this->compareConnectors(false, systemCapture[1],signalProcessBuffer.srcProcessOutputConnector) == true)
-							{
-								this->inputSystemBufferIndex[1] = signalProcessBufferIndex;
-		#if(dbg >= 2)
-								cout << "system:capture_2 connected to buffer[" << this->inputSystemBufferIndex[1] << "] input. "  << endl;
-		#endif
-							}
-	#endif
-						}
-						signalProcessBufferIndex++;
-					}
-				}
-			}
-			// ****************  Connect system playback inputs ***********************************************
-			int processSignalBufferIndex = 0;
-			for(auto & processSignalBuffer : this->comboStruct.processSignalBufferArray)
-			{
-				for(auto & destProcessInputConnector : processSignalBuffer.destProcessInputConnectorVector)
-				{
-					if(this->compareConnectors(false, systemPlayback[0],
-							destProcessInputConnector) == true)
-					{
-						this->outputSystemBufferIndex[0] = processSignalBufferIndex;
-	#if(dbg >= 2)
-						cout << "system:playback_1 connected to buffer: " << this->outputSystemBufferIndex[0] << endl;
-	#endif
-
-					}
-					else if(this->compareConnectors(false, systemPlayback[1],
-							destProcessInputConnector) == true)
-					{
-
-						this->outputSystemBufferIndex[1] = processSignalBufferIndex;
-	#if(dbg >= 2)
-						cout << "system:playback_2 connected to buffer: " << this->outputSystemBufferIndex[1] << endl;
-	#endif
-
-					}
-				}
-				processSignalBufferIndex++;
-			}
-		}
-		catch(exception &e)
-		{
-			cout << "exception in ComboDataInt::setConnectedBufferIndexesInSortedProcessStructProcessIOVectorsUsingProcBufferArray: " << e.what() << endl;
-		}
-
-#if(dbg >= 3)
-		this->printProcessStructVector(true, this->sortedProcessStructVector);
-#endif
-#if(dbg >= 1)
-		 cout << "***** EXITING: ComboDataInt::setConnectedBufferIndexesInSortedProcessStructProcessIOVectorsUsingProcBufferArray: " << status << endl;
-#endif
-		return status;
-	}
-
-#endif
 
 
 
@@ -2449,18 +2285,16 @@ using namespace std;
 	int ComboDataInt::setControlOutputAndProcessParameterControlBufferIndexesUsingParamContBufferArray()
 	{
 #if(dbg >= 1)
-		 cout << "***** ENTERING: ComboDataInt::setControlOutputAndProcessParameterControlConnectionIndexesUsingParamContBufferArray" << endl;
+		 cout << "***** ENTERING: ComboDataInt::" << __func__ << endl;
 #endif
 		int status = 0;
 		try
 		{
-			// initialize all buffers to "empty state"
 			for(auto & procParamContBuffer : this->comboStruct.processParamControlBufferArray)
 			{
 				procParamContBuffer.destProcessParameterConnector.parentObjectName = "empty";
 				procParamContBuffer.destProcessParameterConnector.connectorName = "empty";
 				procParamContBuffer.destProcessParameterConnector.connectedBufferIndex = 59;
-				//procParamContBuffer.parameterValueIndex = 0;
 				procParamContBuffer.srcControlOutputConnector.parentObjectName = "empty";
 				procParamContBuffer.srcControlOutputConnector.connectorName = "empty";
 				procParamContBuffer.srcControlOutputConnector.connectedBufferIndex = 59;
@@ -2483,8 +2317,6 @@ using namespace std;
 									processParamControlBufferIndex;
 					parameter.paramConnector.connectedBufferIndex =
 									processParamControlBufferIndex;
-					/*this->comboStruct.processParamControlBufferArray[processParamControlBufferIndex].parameterValueIndex =
-									parameter.valueIndex;*/
 
 					this->comboStruct.processIndexMap[sortedProcess.processName].paramIndexMap[parameter.paramConnector.connectorName].processParamControlBufferIndex =
 									processParamControlBufferIndex;
@@ -2497,16 +2329,10 @@ using namespace std;
 
 			processParamControlBufferIndex = 0; // reset buffer index
 
-			// do control connection loop inside a parameter controller buffer loop
 			for(auto & processParamControlConnection : this->comboStruct.processParamControlBufferArray)
 			{
 				for(auto & sortedControlConnection : this->sortedControlConnectionStructVector)
-				{	// if the control connection dest connector matches the destProcessParameterConnector connector,
-					// loop through the processParamControlStructVector to match the connection src.
-					// When a match is found,set the processParamControlConnection.srcControl.connectedBufferIndex
-					// to the processParamControlBufferIndex and push the outputDest into
-					// sortedControlStruct.targetProcessParamVector
-
+				{
 					if(this->compareConnectors(false, processParamControlConnection.destProcessParameterConnector
 											   ,sortedControlConnection.destProcessParameterConnector) == true)
 					{
@@ -2555,11 +2381,11 @@ using namespace std;
 		}
 		catch(exception &e)
 		{
-			cout << "exception in ComboDataInt::setControlOutputAndProcessParameterControlConnectionIndexesUsingParamContBufferArray: " << e.what() << endl;
+			cout << "exception in ComboDataInt" << __func__ << ": " << e.what() << endl;
 		}
 
 #if(dbg >= 1)
-		 cout << "***** EXITING: ComboDataInt::setControlOutputAndProcessParameterControlConnectionIndexesUsingParamContBufferArray: " << status << endl;
+		 cout << "***** EXITING: ComboDataInt::" << __func__ << ": " << status << endl;
 #endif
 
 		return status;
@@ -2571,6 +2397,9 @@ using namespace std;
 	int ComboDataInt::setProcessAndControlTypeIntsInSortedStructVectors()
 	{
 		int status = 0;
+#if(dbg >= 1)
+		 cout << "***** ENTERING: ComboDataInt::" << __func__ << endl;
+#endif
 		try
 		{
 			int processIndex = 0;
@@ -2583,10 +2412,8 @@ using namespace std;
 			}
 
 
-			//loop through sortedControlStructVector vector
 			for(auto & sortedControlStruct : this->sortedControlStructVector)
 			{
-				//for each sortedControlStructVector, enter the control data into the ControlEvent element
 				if(sortedControlStruct.conType.compare("norm") == 0)
 				{
 					sortedControlStruct.conTypeInt = 0;
@@ -2608,6 +2435,9 @@ using namespace std;
 			status = -1;
 		}
 
+#if(dbg >= 1)
+		 cout << "***** EXITING: ComboDataInt::" << __func__ << ": " << status << endl;
+#endif
 
 		return status;
 	}
@@ -2622,15 +2452,13 @@ using namespace std;
 	{
 
 #if(dbg >= 1)
-		 cout << "*****ENTERING ComboDataInt::loadProcessIndexMapFromSortedProcessVector: " << endl;
+		 cout << "*****ENTERING ComboDataInt::" << __func__ << endl;
 #endif
 		int status = 0;
 		string causeOfException;
 
 		try
 		{
-
-
 			for(auto & process : this->sortedProcessStructVector)
 			{
 				ProcessIndexing procIndexing;
@@ -2660,12 +2488,12 @@ using namespace std;
 		}
 		catch(exception &e)
 		{
-			 cout << "exception in ComboDataInt::loadProcessIndexMapFromSortedProcessVector: " << causeOfException << ":" << e.what() <<  endl;
+			 cout << "exception in ComboDataInt::" << __func__ << ": " << causeOfException << ":" << e.what() <<  endl;
 			status = -1;
 		}
 
 #if(dbg >= 1)
-		 cout << "***** EXITING ComboDataInt::loadProcessIndexMapFromSortedProcessVector: " << status << endl;
+		 cout << "***** EXITING ComboDataInt::" << __func__ << ": " << status << endl;
 #endif
 
 		 return status;
@@ -2678,9 +2506,8 @@ using namespace std;
 		map<string, ControlIndexing> controlIndexMap;
 		int status = 0;
 #if(dbg >= 1)
-		 cout << "*****ENTERING ComboDataInt::loadControlIndexMapFromSortedControlVector" << endl;
+		 cout << "*****ENTERING ComboDataInt::" << __func__ << endl;
 #endif
-
 
 		try
 		{
@@ -2692,7 +2519,6 @@ using namespace std;
 				contIndexing.controlIndex = control.controlSequenceIndex;
 				contIndexing.parentEffect = control.parentEffect;
 				contIndexing.controlTypeInt = control.conTypeInt;
-
 
 				map<string,ProcessControlParameterIndexing> paramIndexMap;
 
@@ -2711,26 +2537,25 @@ using namespace std;
 		}
 		catch(exception &e)
 		{
-			 cout << "exception in ComboDataInt::loadControlIndexMapFromSortedControlVector: " << e.what() <<  endl;
+			 cout << "exception in ComboDataInt::" << __func__ << ": " << e.what() <<  endl;
 			status = -1;
 		}
 
 
 #if(dbg >= 1)
-		 cout << "***** EXITING ComboDataInt::loadControlIndexMapFromSortedControlVector: " << status << endl;
+		 cout << "***** EXITING ComboDataInt::" << __func__ << ": " << status << endl;
 #endif
 		 return status;
 	}
 
 
-#define dbg 2
+#define dbg 0
 	int ComboDataInt::loadIndexMappedComboDataIntoComboStructFromSortedVectors(void)
 	{
 #if(dbg >= 1)
-		 cout << "*****ENTERING ComboDataInt::loadIndexMappedComboDataFromEffectComboJson" << endl;
+		 cout << "*****ENTERING ComboDataInt::" << __func__ << endl;
 #endif
 		int status = 0;
-
 
 		try
 		{
@@ -2739,13 +2564,12 @@ using namespace std;
 		}
 		catch(exception &e)
 		{
-			 cout << "exception in ComboDataInt::loadIndexMappedComboDataFromEffectComboJson: " << e.what() <<  endl;
+			 cout << "exception in ComboDataInt::" << __func__ << ": " << e.what() <<  endl;
 			status = -1;
 		}
 #if(dbg >= 1)
-		 cout << "***** EXITING ComboDataInt::loadIndexMappedComboDataFromEffectComboJson: " << status << endl;
+		 cout << "***** EXITING ComboDataInt::" << __func__ << ": " << status << endl;
 #endif
-
 
 		return status;
 	}
@@ -2753,12 +2577,12 @@ using namespace std;
 
 
 
-#define dbg 2
+#define dbg 3
 	int ComboDataInt::setPedalUi(void)
 	{
 		int status = 0;
 #if(dbg >= 1)
-		 cout << "*****ENTERING ComboDataInt::getPedalUi" << endl;
+		 cout << "*****ENTERING ComboDataInt::" << __func__ << endl;
 #endif
 
 		string effectString;
@@ -2784,69 +2608,6 @@ using namespace std;
 	#endif
 
 				int effectIndex = 0;
-#if 0
-				for(auto & effect : this->comboFileStruct.effectArray)
-				{
-					effectParamArrayIndex = 0;
-					this->pedalUiJson["effects"][effectIndex]["abbr"] = effect.abbr;
-					this->pedalUiJson["effects"][effectIndex]["name"] = effect.name;
-	#if(dbg>=2)
-					 cout << "\teffect: " << this->pedalUiJson["effects"][effectIndex]["abbr"].asString();
-					 cout << "\t" << this->pedalUiJson["effects"][effectIndex]["name"].asString() << endl;
-	#endif
-
-	#if(dbg>=2)
-					 cout << "\tcontrolCount: " << controlCount << endl;
-	#endif
-
-					for(auto & control : effect.processParamControlVector)
-					{
-						vector<ControlParameter> contParamVector =
-										control.paramVector;
-						for(auto & parameter : control.paramVector)
-						{
-							this->pedalUiJson["effects"][effectIndex]["params"][effectParamArrayIndex]["name"] =
-											parameter.alias;
-							this->pedalUiJson["effects"][effectIndex]["params"][effectParamArrayIndex]["abbr"] =
-											parameter.abbr;
-							this->pedalUiJson["effects"][effectIndex]["params"][effectParamArrayIndex]["value"] =
-											parameter.valueIndex;
-							this->pedalUiJson["effects"][effectIndex]["params"][effectParamArrayIndex]["parentControl"] =
-											control.name;
-							if(contParamVector[paramIndex].inheritControlledParamType == true)
-							{
-	#if(dbg>=3)
-								 cout << contParamVector[paramIndex].alias << "inheriting controlled parameter: ";
-								 cout << contParamVector[paramIndex].paramType << " becoming ";
-								 cout<< contParamVector[paramIndex].controlledParamType << endl;
-	#endif
-								this->pedalUiJson["effects"][effectIndex]["params"][effectParamArrayIndex]["paramType"] =
-												parameter.controlledParamType;
-							}
-							else
-							{
-								this->pedalUiJson["effects"][effectIndex]["params"][effectParamArrayIndex]["paramType"] =
-												parameter.paramType;
-							}
-
-							this->pedalUiJson["effects"][effectIndex]["params"][effectParamArrayIndex]["index"] = absParamArrayIndex;
-	#if(dbg>=3)
-
-							{
-								cout << "\tparam: " << this->pedalUiJson["effects"][effectIndex]["params"][effectParamArrayIndex]["index"].asString();
-								cout << "\t" <<	this->pedalUiJson["effects"][effectIndex]["params"][effectParamArrayIndex]["name"].asString();
-								cout << "\t" <<	this->pedalUiJson["effects"][effectIndex]["params"][effectParamArrayIndex]["abbr"].asString();
-								cout << "\t" <<	this->pedalUiJson["effects"][effectIndex]["params"][effectParamArrayIndex]["value"].asInt();
-								cout << "\t" <<	this->pedalUiJson["effects"][effectIndex]["params"][effectParamArrayIndex]["paramType"].asInt() << endl;
-							}
-	#endif
-							effectParamArrayIndex++;
-							absParamArrayIndex++;
-						}
-					}
-					effectIndex++;
-				}
-#endif
 				int currentEffectIndex = 0;
 				effectParamArrayIndex = 0;
 
@@ -2884,19 +2645,15 @@ using namespace std;
 											control.controlName;
 							this->pedalUiJson["effects"][effectIndex]["params"][effectParamArrayIndex]["paramType"] =
 											parameter.paramType;
-							/*cout << "\t\t" << parameter.parameterName << ":";
-							cout << "\t\t" << parameter.parameterAbbr << ":";
-							cout << "\t\t" << parameter.value << ":";
-							cout << "\t\t" << control.controlName << endl;*/
+#if(dbg>=2)
 							cout << "\t\t" << this->pedalUiJson["effects"][effectIndex]["params"][effectParamArrayIndex]["name"].asString() << ":";
 							cout << "\t\t" << this->pedalUiJson["effects"][effectIndex]["params"][effectParamArrayIndex]["abbr"].asString() << ":";
 							cout << "\t\t" << this->pedalUiJson["effects"][effectIndex]["params"][effectParamArrayIndex]["value"].asInt() << ":";
 							cout << "\t\t" << this->pedalUiJson["effects"][effectIndex]["params"][effectParamArrayIndex]["parentControl"].asString() << endl;
+#endif
 							effectParamArrayIndex++;
 					}
 				}
-
-
 
 	#if(dbg>=2)
 				 cout << "param count: " << this->pedalUiJson["effects"][0]["params"].size() << endl;
@@ -2909,16 +2666,14 @@ using namespace std;
 				status = -1;
 				cout << "effectComboJson is NULL" << endl;
 			}
-
 		}
 		catch(exception &e)
 		{
-			cout << "exception in ComboDataInt::getPedalUi: " << e.what() << endl;
+			cout << "exception in ComboDataInt::" << __func__ << ": " << e.what() << endl;
 		}
 
-
 #if(dbg >= 1)
-		 cout << "***** EXITING ComboDataInt::getPedalUi: " << status << endl;
+		 cout << "***** EXITING ComboDataInt::" << __func__ << ": " << status << endl;
 #endif
 #if(dbg >= 2)
 		 cout << getCompactedJSONData(this->pedalUiJson) << endl;
@@ -2927,20 +2682,16 @@ using namespace std;
 	}
 
 
-
-
-
-
 //******************* ComboStruct Sub-Functions ******************
 
-/****************************** ComboStructProcess Get******************************************/
+/****************************** ComboStructProcess Set******************************************/
 
 #define dbg 0
 void ComboDataInt::setComboStructProcessInputBufferIndexes(int sequenceIndex, Process process)
 {
 	int j = 0;
 #if(dbg >= 1)
-	cout << "*****ENTERING ComboDataInt::setComboStructProcessInputBufferIndexes: " << process.processName << endl;
+	cout << "*****ENTERING ComboDataInt::" << __func__ << ": " << process.processName << endl;
 #endif
 
 
@@ -2953,18 +2704,18 @@ void ComboDataInt::setComboStructProcessInputBufferIndexes(int sequenceIndex, Pr
 						input.connectedBufferIndex;
 
 		#if(dbg >= 2)
-				 cout << "tempCombo.processSequenceData[" << i << "].inputConnectedBufferIndexArray[" << j << "]: " << tempCombo.processSequenceData[i].inputConnectedBufferIndexArray[j] << endl;
+				 cout << "this->comboStruct.processSequenceData[" << sequenceIndex << "].inputConnectedBufferIndexArray[" << j << "]: " << this->comboStruct.processSequenceData[sequenceIndex].inputConnectedBufferIndexArray[j] << endl;
 		#endif
 				j++;
 			}
 		}
 		catch(exception &e)
 		{
-			cout << "exception in ComboDataInt::updateControlParameterValuesInComboFileStruct:" << e.what() << endl;
+			cout << "exception in ComboDataInt::" << __func__ << ": " << e.what() << endl;
 
 		}
 #if(dbg >= 1)
-	cout << "***** EXITING ComboDataInt::setComboStructProcessInputBufferIndexes " << endl;
+	cout << "***** EXITING ComboDataInt::" << __func__ << ": " << endl;
 #endif
 }
 
@@ -2972,10 +2723,8 @@ void ComboDataInt::setComboStructProcessOutputBufferIndexes(int sequenceIndex, P
 {
 	int j = 0;
 #if(dbg >= 1)
-	cout << "*****ENTERING ComboDataInt::setComboStructProcessOutputBufferIndexes: " << process.processName << endl;
+	cout << "*****ENTERING ComboDataInt::" << __func__ << ": " << process.processName << endl;
 #endif
-
-
 
 	try
 	{
@@ -2985,19 +2734,19 @@ void ComboDataInt::setComboStructProcessOutputBufferIndexes(int sequenceIndex, P
 			this->comboStruct.processSequenceData[sequenceIndex].outputConnectedBufferIndexArray[j] =
 					output.connectedBufferIndex;
 	#if(dbg >= 2)
-			 cout << "tempCombo.processSequenceData[" << i << "].outputProcessSignalBufferArray[" << j << "]: " << tempCombo.processSequenceData[i].outputConnectedBufferIndexArray[j] << endl;
+			 cout << "this->comboStruct.processSequenceData[" << sequenceIndex << "].outputProcessSignalBufferArray[" << j << "]: " << this->comboStruct.processSequenceData[sequenceIndex].outputConnectedBufferIndexArray[j] << endl;
 	#endif
 			j++;
 		}
 	}
 	catch(exception &e)
 	{
-		cout << "exception in ComboDataInt::setComboStructProcessOutputBufferIndexes:" << e.what() << endl;
+		cout << "exception in ComboDataInt::" << __func__ << ": " << e.what() << endl;
 
 	}
 
 #if(dbg >= 1)
-	cout << "***** EXITING ComboDataInt::setComboStructProcessOutputBufferIndexes " << endl;
+	cout << "***** EXITING ComboDataInt::" << __func__ << endl;
 #endif
 }
 
@@ -3006,10 +2755,8 @@ void ComboDataInt::setComboStructProcessParameters(int sequenceIndex, Process pr
 {
 	int j = 0;
 #if(dbg >= 1)
-	cout << "*****ENTERING ComboDataInt::setComboStructProcessParameters: " << process.processName << endl;
+	cout << "*****ENTERING ComboDataInt::" << __func__ << ": " << process.processName << endl;
 #endif
-
-
 
 		try
 		{
@@ -3046,12 +2793,12 @@ void ComboDataInt::setComboStructProcessParameters(int sequenceIndex, Process pr
 		}
 		catch(exception &e)
 		{
-			cout << "exception in ComboDataInt::setComboStructProcessParameters:" << e.what() << endl;
+			cout << "exception in ComboDataInt::" << __func__ << ": " << e.what() << endl;
 
 		}
 
 #if(dbg >= 1)
-	cout << "***** EXITING ComboDataInt::setComboStructProcessParameters " << endl;
+	cout << "***** EXITING ComboDataInt::" << __func__ << endl;
 #endif
 
 }
@@ -3059,9 +2806,8 @@ void ComboDataInt::setComboStructProcessParameters(int sequenceIndex, Process pr
 void ComboDataInt::setComboStructProcessDataObject(int sequenceIndex, Process process)
 {
 #if(dbg >= 1)
-	cout << "*****ENTERING ComboDataInt::setComboStructProcessDataObject: " << process.processName << endl;
+	cout << "*****ENTERING ComboDataInt::" << __func__ << ": " << process.processName << endl;
 #endif
-
 
 	try
 	{
@@ -3086,82 +2832,23 @@ void ComboDataInt::setComboStructProcessDataObject(int sequenceIndex, Process pr
 		this->comboStruct.processSequenceData[sequenceIndex].parameterCount = process.paramCount;
 		this->setComboStructProcessParameters(sequenceIndex,process);
 
-		this->comboStruct.processSequenceData[sequenceIndex].bufferSize = 256;//this->procUtil.bufferSize;
-		this->comboStruct.processSequenceData[sequenceIndex].inputCouplingMode = 1;//this->procUtil.inputCouplingMode;
-		this->comboStruct.processSequenceData[sequenceIndex].antiAliasingNumber = 1;//this->procUtil.antiAliasingNumber;
-		this->comboStruct.processSequenceData[sequenceIndex].waveshaperMode = 0;//this->procUtil.waveshaperMode;
+		this->comboStruct.processSequenceData[sequenceIndex].bufferSize = 256;
+		this->comboStruct.processSequenceData[sequenceIndex].inputCouplingMode = 1;
+		this->comboStruct.processSequenceData[sequenceIndex].antiAliasingNumber = 1;
+		this->comboStruct.processSequenceData[sequenceIndex].waveshaperMode = 0;
 	}
 	catch(exception &e)
 	{
-		cout << "exception in ComboDataInt::setComboStructProcessDataObject:" << e.what() << endl;
+		cout << "exception in ComboDataInt::" << __func__ << ": " << e.what() << endl;
 
 	}
 
 #if(dbg >= 1)
-	cout << "***** EXITING ComboDataInt::setComboStructProcessDataObject " << endl;
+	cout << "***** EXITING ComboDataInt::" << __func__ << endl;
 #endif
 
 }
 
-/****************************** ComboStructProcess Set******************************************/
-
-#if 0
-
-void ComboDataInt::setComboStructProcessInputBufferIndexes(ProcessObjectData *processData, int processInputs[])
-{
-
-
-	int j = 0;
-	for(auto & input : processData->inputConnectedBufferIndexArray)
-	{
-		input = processInputs[j];
-
-#if(dbg >= 2)
-		 cout << "tempCombo.processSequenceData[" << i << "].inputConnectedBufferIndexArray[" << j << "]: " << tempCombo.processSequenceData[i].inputConnectedBufferIndexArray[j] << endl;
-#endif
-		j++;
-	}
-
-
-
-}
-void ComboDataInt::setComboStructProcessOutputBufferIndexes(ProcessObjectData *processData, int processOutputs[])
-{
-	ProcessOutputArrayStruct outputArrayStruct;
-
-	int j = 0;
-	for(auto & output : processData->outputConnectedBufferIndexArray)
-	{
-
-		output = processOutputs[j];
-#if(dbg >= 2)
-		 cout << "tempCombo.processSequenceData[" << i << "].outputProcessSignalBufferArray[" << j << "]: " << tempCombo.processSequenceData[i].outputConnectedBufferIndexArray[j] << endl;
-#endif
-		j++;
-	}
-
-}
-void ComboDataInt::setComboStructProcessParameterValues(ProcessObjectData *processData,  ProcessObjectParameter parameterArray[])
-{
-
-	int j = 0;
-	for(auto & parameter : processData->parameterArray)
-	{
-		parameter = parameterArray[j];
-
-#if(dbg >= 1)
-		cout << "\t\tparameterName: " << tempCombo.processSequenceData[i].parameterArray[j].parameterName << endl;
-		cout << "\t\tvalue: " << tempCombo.processSequenceData[i].parameterArray[j].internalIndexValue << endl;
-#endif
-		j++;
-	}
-
-}
-void ComboDataInt::setComboStructProcessDataObject(int sequenceIndex, ProcessObjectData processObjectData)
-{
-	this->comboStruct.processSequenceData[sequenceIndex] = processObjectData;
-}
-#endif
 
 /****************************** ComboStructControl Set******************************************/
 
@@ -3170,7 +2857,7 @@ void ComboDataInt::setComboStructControlOutputs(int sequenceIndex, Control contr
 {
 	int j = 0;
 #if(dbg >= 1)
-	cout << "*****ENTERING ComboDataInt::setComboStructControlOutputs: " << control.name << endl;
+	cout << "*****ENTERING ComboDataInt::" << __func__ << ": " << control.name << endl;
 #endif
 
 
@@ -3181,18 +2868,18 @@ void ComboDataInt::setComboStructControlOutputs(int sequenceIndex, Control contr
 			this->comboStruct.controlSequenceData[sequenceIndex].outputToParamControlBufferIndex[j] =
 					outputTarget.connectedBufferIndex;
 	#if(dbg >= 2)
-			 cout << "tempCombo.controlSequenceData[" << i << "].outputToParamControlBufferIndex: " << tempCombo.controlSequenceData[i].outputToParamControlBufferIndex[j] << endl;
+			 cout << "this->comboStruct.controlSequenceData[" << sequenceIndex << "].outputToParamControlBufferIndex: " << this->comboStruct.controlSequenceData[sequenceIndex].outputToParamControlBufferIndex[j] << endl;
 	#endif
 			j++;
 		}
 	}
 	catch(exception &e)
 	{
-		cout << "exception in ComboDataInt::setComboStructControlOutputs:" << e.what() << endl;
+		cout << "exception in ComboDataInt::" << __func__ << ": " << e.what() << endl;
 
 	}
 #if(dbg >= 1)
-	cout << "***** EXITING ComboDataInt::setComboStructControlOutputs " << endl;
+	cout << "***** EXITING ComboDataInt::" << __func__ << endl;
 #endif
 
 }
@@ -3202,7 +2889,7 @@ void ComboDataInt::setComboStructControlOutputInvs(int sequenceIndex, Control co
 {
 	int j = 0;
 #if(dbg >= 1)
-	cout << "*****ENTERING ComboDataInt::setComboStructControlOutputInvs: " << control.name << endl;
+	cout << "*****ENTERING ComboDataInt::" << __func__ << ": " << control.name << endl;
 #endif
 
 
@@ -3214,18 +2901,18 @@ void ComboDataInt::setComboStructControlOutputInvs(int sequenceIndex, Control co
 			this->comboStruct.controlSequenceData[sequenceIndex].outputInvToParamControlBufferIndex[j] =
 					outputInvTarget.connectedBufferIndex;
 	#if(dbg >= 2)
-			 cout << "tempCombo.controlSequenceData[" << i << "].outputInvToParamControlBufferIndex: " << tempCombo.controlSequenceData[i].outputInvToParamControlBufferIndex[j] << endl;
+			 cout << "this->comboStruct.controlSequenceData[" << sequenceIndex << "].outputInvToParamControlBufferIndex: " << this->comboStruct.controlSequenceData[sequenceIndex].outputInvToParamControlBufferIndex[j] << endl;
 	#endif
 			j++;
 		}
 	}
 	catch(exception &e)
 	{
-		cout << "exception in ComboDataInt::setComboStructControlOutputInvs:" << e.what() << endl;
+		cout << "exception in ComboDataInt::" << __func__ << ": " << e.what() << endl;
 
 	}
 #if(dbg >= 1)
-	cout << "***** EXITING ComboDataInt::setComboStructControlOutputInvs " << endl;
+	cout << "***** EXITING ComboDataInt::" << __func__ << endl;
 #endif
 }
 
@@ -3234,7 +2921,7 @@ void ComboDataInt::setComboStructControlParameters(int sequenceIndex, Control co
 {
 	int j = 0;
 #if(dbg >= 1)
-	cout << "*****ENTERING ComboDataInt::setComboStructControlParameters: " << control.name << endl;
+	cout << "*****ENTERING ComboDataInt::" << __func__ << ": " << control.name << endl;
 #endif
 
 
@@ -3278,27 +2965,21 @@ void ComboDataInt::setComboStructControlParameters(int sequenceIndex, Control co
 	}
 	catch(exception &e)
 	{
-		cout << "exception in ComboDataInt::setComboStructControlParameters:" << e.what() << endl;
+		cout << "exception in ComboDataInt::" << __func__ << ": " << e.what() << endl;
 
 	}
 
 #if(dbg >= 1)
-	cout << "***** EXITING ComboDataInt::setComboStructControlParameters " << endl;
+	cout << "***** EXITING ComboDataInt::" << __func__ << endl;
 #endif
 }
-
-
-
 
 
 void ComboDataInt::setComboStructControlDataObject(int sequenceIndex, Control control)
 {
 #if(dbg >= 1)
-	cout << "*****ENTERING ComboDataInt::setComboStructControlDataObject: " << control.name << endl;
+	cout << "*****ENTERING ComboDataInt::" << __func__ << ": " << control.name << endl;
 #endif
-
-
-
 
 	try
 	{
@@ -3323,61 +3004,22 @@ void ComboDataInt::setComboStructControlDataObject(int sequenceIndex, Control co
 	}
 	catch(exception &e)
 	{
-		cout << "exception in ComboDataInt::setComboStructControlDataObject:" << e.what() << endl;
+		cout << "exception in ComboDataInt::" << __func__ << ": " << e.what() << endl;
 
 	}
 
 #if(dbg >= 1)
-	cout << "***** EXITING ComboDataInt::setComboStructControlDataObject " << endl;
+	cout << "***** EXITING ComboDataInt::" << __func__ << endl;
 #endif
 
 }
-
-/****************************** ComboStructControl Set******************************************/
-#if 0
-
-void ComboDataInt::setComboStructControlOutputs(ControlObjectData *controlData, int controlOutputs[])
-{
-	for(int i = 0; i < controlData->outputConnectionCount; i++)
-	{
-		controlData->outputToParamControlBufferIndex[i] = controlOutputs[i];
-
-	}
-}
-void ComboDataInt::setComboStructControlOutputInvs(ControlObjectData *controlData, int controlOutputInvs[])
-{
-	for(int i = 0; i < controlData->outputInvConnectionCount; i++)
-	{
-		controlData->outputToParamControlBufferIndex[i] = controlOutputInvs[i];
-
-	}
-
-}
-void ComboDataInt::setComboStructControlParameters(ControlObjectData *controlData, ControlObjectParameter controlParameter[])
-{
-	for(int i = 0; i < controlData->parameterCount; i++)
-	{
-		controlData->parameterArray[i] = controlParameter[i];
-
-	}
-
-}
-
-
-void ComboDataInt::setComboStructControlDataObject(int sequenceIndex, ControlObjectData controlObjectData)
-{
-	this->comboStruct.controlSequenceData[sequenceIndex] = controlObjectData;
-}
-
-#endif
-/**************************************************************************************************/
 
 
 
 void ComboDataInt::setComboStructProcessParameterControlBufferArray(void)
 {
 #if(dbg >= 1)
-	cout << "*****ENTERING ComboDataInt::setComboStructProcessParameterControlBufferArray" << endl;
+	cout << "*****ENTERING ComboDataInt::" << __func__ << endl;
 #endif
 
 
@@ -3407,18 +3049,18 @@ void ComboDataInt::setComboStructProcessParameterControlBufferArray(void)
 	}
 	catch(exception &e)
 	{
-		cout << "exception in ComboDataInt::setComboStructProcessParameterControlBufferArray:" << e.what() << endl;
+		cout << "exception in ComboDataInt::" << __func__ << ": " << e.what() << endl;
 
 	}
 #if(dbg >= 1)
-	cout << "***** EXITING ComboDataInt::setComboStructProcessParameterControlBufferArray " << endl;
+	cout << "***** EXITING ComboDataInt::" << __func__ << endl;
 #endif
 }
 
 void ComboDataInt::setComboStructProcessSignalBufferArray(void)
 {
 #if(dbg >= 1)
-	cout << "*****ENTERING ComboDataInt::setComboStructProcessSignalBufferArray" << endl;
+	cout << "*****ENTERING ComboDataInt::" << __func__ << endl;
 #endif
 
 
@@ -3430,24 +3072,19 @@ void ComboDataInt::setComboStructProcessSignalBufferArray(void)
 		{
 			for(auto & output : sortedProcess.inputVector)
 			{
-
 				this->comboStruct.processSignalBufferArray[i].srcProcessOutputConnector = output;
-				/*for(auto & destProcessConn : bufferedProcessConnection.destProcessInputConnectorVector)
-				{
-					this->comboStruct.processSignalBufferArray[i].destProcessInputConnectorVector.push_back(destProcessConn);
-				}*/
 				i++;
 			}
 		}
 	}
 	catch(exception &e)
 	{
-		cout << "exception in ComboDataInt::setComboStructProcessSignalBufferArray:" << e.what() << endl;
+		cout << "exception in ComboDataInt::" << __func__ << ": " << e.what() << endl;
 
 	}
 
 #if(dbg >= 1)
-	cout << "***** EXITING ComboDataInt::setComboStructProcessSignalBufferArray " << endl;
+	cout << "***** EXITING ComboDataInt::" << __func__ << endl;
 #endif
 
 }
@@ -3458,168 +3095,13 @@ void ComboDataInt::setComboStructProcessSignalBufferArray(void)
 
 	//******************* Updates when saving Combo ******************
 
-#if 0
-	int ComboDataInt::updateControlParameterValuesInComboFileStruct()
-	{
-		int status = 0;
-#if(dbg >= 1)
-		 cout << "*****ENTERING ComboDataInt::updateControlParameterValuesInComboFileStruct" << endl;
-#endif
 
-		try
-		{
-			string name = this->comboStruct.name;
-
-			for(auto & effect : this->comboFileStruct.effectArray)
-			{
-				cout << effect.name << endl;
-				// Match at the control level
-				for(auto & control : effect.processParamControlVector)
-				{
-					for(auto & seqControl : this->comboStruct.controlSequenceData)
-					{
-						if(control.name.compare(seqControl.controlName) == 0)
-						{
-							// Match at the parameter level
-							for(auto & parameter : control.paramVector)
-							{
-								for(auto & seqParam : seqControl.parameterArray)
-								{
-									if(parameter.alias.compare(seqParam.parameterName) == 0)
-									{
-										parameter.valueIndex = seqParam.value;
-										cout << effect.name << ":" << control.name << ":" << parameter.alias << "=" << parameter.valueIndex << endl;
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-#if(dbg >= 3)
-			for(auto & effect : this->comboFileStruct.effectArray)
-			{
-				cout << effect.name << endl;
-				for(auto & control : effect.processParamControlVector)
-				{
-					cout << "\t" << control.name << endl;
-					for(auto & seqControl : combo.controlSequenceData)
-					{
-						cout << "\t" << seqControl.controlName << endl;
-						if(control.name.compare(seqControl.controlName) == 0)
-						{
-							// Match at the parameter level
-							for(auto & parameter : control.paramVector)
-							{
-								cout << "\t" << parameter.name << endl;
-								for(auto & seqParam : seqControl.parameter)
-								{
-									cout << "\t" << seqParam.parameterName << endl;
-									if(parameter.alias.compare(seqParam.parameterName) == 0)
-									{
-										cout << effect.name << ":" << control.name << ":" << parameter.alias << "=" << parameter.valueIndex << endl;
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-			cout << endl;
-#endif
-
-		}
-		catch(exception &e)
-		{
-			cout << "exception in ComboDataInt::updateControlParameterValuesInComboFileStruct:" << e.what() << endl;
-			status = -1;
-		}
-#if(dbg >= 1)
-		 cout << "***** EXITING ComboDataInt::updateControlParameterValuesInComboFileStruct: " << status << endl;
-#endif
-
-
-
-		return status;
-	}
-#endif
-
-#if 0
-	int  ComboDataInt::loadComboFileStructDataBackIntoEffectComboJson()
-	{
-		int status = 0;
-#if(dbg >= 1)
-		 cout << "*****ENTERING ComboDataInt::loadComboFileStructDataBackIntoEffectComboJson" << endl;
-#endif
-#if(dbg >= 2)
-		printEffectComboJsonControlParameters(this->effectComboJson);
-#endif
-
-		try
-		{
-			// EFFECT
-			for(auto & effectJson : this->effectComboJson["effectArray"])
-			{
-				for(auto & effect : this->comboFileStruct.effectArray)
-				{
-					if(effectJson["name"].asString().compare(effect.name) == 0)
-					{
-						// CONTROL
-						for(auto & controlJson : effectJson["controlArray"])
-						{
-							for(auto & control : effect.processParamControlVector)
-							{
-								if(controlJson["name"].asString().compare(control.name) == 0)
-								{
-									// PARAMETER
-									for(auto & parameterJson : controlJson["conParamArray"])
-									{
-										for(auto & parameter : control.paramVector)
-										{
-											if(parameterJson["alias"].asString().compare(parameter.alias) == 0)
-											{
-#if(dbg >= 2)
-												cout << "MATCH:" << effect.name << ":" << control.name << ":" << parameter.alias << endl;
-#endif
-												parameterJson["value"] = parameter.valueIndex;
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-			cout << endl;
-
-		}
-		catch(exception &e)
-		{
-			cout << "exception in loadComboFileStructDataBackIntoEffectComboJson: " << e.what() << endl;
-			status = -1;
-		}
-
-
-
-#if(dbg >= 1)
-		 cout << "***** EXITING ComboDataInt::loadComboFileStructDataBackIntoEffectComboJson: " << status << endl;
-#endif
-#if(dbg >= 2)
-		printEffectComboJsonControlParameters(this->effectComboJson);
-#endif
-
-		return status;
-	}
-#endif
-
-
-#define dbg 2
+#define dbg 0
 	int  ComboDataInt::loadComboStructDataBackIntoEffectComboJson()
 	{
 		int status = 0;
 #if(dbg >= 1)
-		 cout << "*****ENTERING ComboDataInt::loadComboStructDataBackIntoEffectComboJson" << endl;
+		 cout << "*****ENTERING ComboDataInt::" << __func__ << endl;
 #endif
 
 		try
@@ -3683,14 +3165,14 @@ void ComboDataInt::setComboStructProcessSignalBufferArray(void)
 		}
 		catch(exception &e)
 		{
-			cout << "exception in ComboDataInt::loadComboStructDataBackIntoEffectComboJson: " << e.what() << endl;
+			cout << "exception in ComboDataInt::" << __func__ << ": " << e.what() << endl;
 			status = -1;
 		}
 
 
 
 #if(dbg >= 1)
-		 cout << "***** EXITING ComboDataInt::loadComboStructDataBackIntoEffectComboJson: " << status << endl;
+		 cout << "***** EXITING ComboDataInt::" << __func__ << ": " << status << endl;
 #endif
 
 		return status;
@@ -3724,7 +3206,7 @@ void ComboDataInt::setComboStructProcessSignalBufferArray(void)
 	{
 		int status = 0;
 #if(dbg >= 1)
-		 cout << "*****ENTERING ComboDataInt::getComboStruct" << endl;
+		 cout << "*****ENTERING ComboDataInt::" << __func__ << endl;
 		 cout << "comboName: " << this->comboName << endl;
 #endif
 
@@ -3734,14 +3216,12 @@ void ComboDataInt::setComboStructProcessSignalBufferArray(void)
 			this->comboStruct.processCount = this->processCount;
 			this->comboStruct.controlCount = this->controlCount;
 
-			//int controlParamBufferIndex = 0;
 			this->comboStruct.name = this->comboName;
 			 cout << this->comboStruct.name << ":" << this->comboStruct.processCount << ":";
 			 cout << this->comboStruct.controlCount << ":" << this->comboStruct.processSignalBufferCount << endl;
 
 			// set Processes
 			int i = 0;
-			int j = 0;
 #if(dbg >= 1)
 					 cout << "Setting Processes: " << endl;
 #endif
@@ -3763,78 +3243,29 @@ void ComboDataInt::setComboStructProcessSignalBufferArray(void)
 				i++;
 			}
 
-			// set process signal buffering
-
-			// set parameterControl buffering
 			i = 0;
 			this->setComboStructProcessParameterControlBufferArray();
-/*			for(auto & processParamControlConnection : this->comboStruct.processParamControlBufferArray)
-			{
-					tempCombo.processParamControlBufferArray[i].destProcessParameterConnector.parentObjectName =
-									processParamControlConnection.destProcessParameterConnector.parentObjectName;
-					tempCombo.processParamControlBufferArray[i].destProcessParameterConnector.connectorName =
-									processParamControlConnection.destProcessParameterConnector.connectorName;
-					tempCombo.processParamControlBufferArray[i].destProcessParameterConnector.connectedBufferIndex =
-									processParamControlConnection.destProcessParameterConnector.connectedBufferIndex;
-					tempCombo.processParamControlBufferArray[i].srcControlOutputConnector.parentObjectName =
-									processParamControlConnection.srcControlOutputConnector.parentObjectName;
-					tempCombo.processParamControlBufferArray[i].srcControlOutputConnector.connectorName =
-									processParamControlConnection.srcControlOutputConnector.connectorName;
-					tempCombo.processParamControlBufferArray[i].srcControlOutputConnector.connectedBufferIndex =
-									processParamControlConnection.srcControlOutputConnector.connectedBufferIndex;
-					tempCombo.processParamControlBufferArray[i].parameterValueIndex =
-									processParamControlConnection.parameterValueIndex;
-
-#if(dbg >= 2)
-				if(tempCombo.processParamControlBufferArray[i].destProcessParameterConnector.parentObjectName.compare("empty") != 0)
-				{
-					cout << "destProcessParameterConnector.parentObjectName: " <<
-									tempCombo.processParamControlBufferArray[i].destProcessParameterConnector.parentObjectName << endl;
-					cout << "destProcessParameterConnector.connectorName: " <<
-									tempCombo.processParamControlBufferArray[i].destProcessParameterConnector.connectorName << endl;
-					cout << "destProcessParameterConnector.connectedBufferIndex: " <<
-									tempCombo.processParamControlBufferArray[i].destProcessParameterConnector.connectedBufferIndex << endl;
-					cout << "srcControl.parentObjectName: " << tempCombo.processParamControlBufferArray[i].srcControlOutputConnector.parentObjectName << endl;
-					cout << "srcControlOutputConnector.connectorName: " << tempCombo.processParamControlBufferArray[i].srcControlOutputConnector.connectorName << endl;
-					cout << "srcControlOutputConnector.processParamControlConnection: " <<
-									tempCombo.processParamControlBufferArray[i].srcControlOutputConnector.connectedBufferIndex << endl;
-					cout << "parameterValueIndex: " << tempCombo.processParamControlBufferArray[i].parameterValueIndex << endl;
-				}
-#endif
-				i++;
-			}*/
-
-
-
-
-			//****************** Copy indexing maps ***************************
-
-			/*tempCombo.processIndexMap.insert(this->processIndexMap.begin(),
-											 this->processIndexMap.end());
-
-			tempCombo.controlIndexMap.insert(this->controlIndexMap.begin(),
-											 this->controlIndexMap.end());*/
 
 			this->comboStruct.inputSystemBufferIndex[0] = this->inputSystemBufferIndex[0];
 #if(dbg >= 2)
-			 cout << "tempCombo.inputSystemBufferIndex[0]: " << tempCombo.inputSystemBufferIndex[0] << endl;
+			 cout << "this->comboStruct.inputSystemBufferIndex[0]: " << this->comboStruct.inputSystemBufferIndex[0] << endl;
 #endif
 			 this->comboStruct.inputSystemBufferIndex[1] = this->inputSystemBufferIndex[1];
 #if(dbg >= 2)
-			 cout << "tempCombo.inputSystemBufferIndex[1]: " << tempCombo.inputSystemBufferIndex[1] << endl;
+			 cout << "this->comboStruct.inputSystemBufferIndex[1]: " << this->comboStruct.inputSystemBufferIndex[1] << endl;
 #endif
 			 this->comboStruct.outputSystemBufferIndex[0] = this->outputSystemBufferIndex[0];
 #if(dbg >= 2)
-			 cout << "tempCombo.outputSystemBufferIndex[0]: " << tempCombo.outputSystemBufferIndex[0] << endl;
+			 cout << "this->comboStruct.outputSystemBufferIndex[0]: " << this->comboStruct.outputSystemBufferIndex[0] << endl;
 #endif
 			 this->comboStruct.outputSystemBufferIndex[1] = this->outputSystemBufferIndex[1];
 #if(dbg >= 2)
-			 cout << "tempCombo.outputSystemBufferIndex[1]: " << tempCombo.outputSystemBufferIndex[1] << endl;
+			 cout << "this->comboStruct.outputSystemBufferIndex[1]: " << this->comboStruct.outputSystemBufferIndex[1] << endl;
 #endif
 		}
 		catch(exception &e)
 		{
-			 cout << "exception in ComboDataInt::getComboStruct: " << e.what() << endl;
+			 cout << "exception in ComboDataInt::" << __func__ << ": " << e.what() << endl;
 			status = -1;
 
 		}
@@ -3843,14 +3274,14 @@ void ComboDataInt::setComboStructProcessSignalBufferArray(void)
 		this->printIndexMappedComboData();
 #endif
 #if(dbg >= 1)
-		 cout << "*****EXITING ComboDataInt::getComboStruct" << endl;
+		 cout << "*****EXITING ComboDataInt::" << __func__ << endl;
 #endif
 
 
 	}
 
 // This is used for saving combo settings to the ComboDataInt, so only parameter values need to be updated.
-#define dbg 2
+#define dbg 0
 void ComboDataInt::setComboStructParamValues(ComboStruct combo)
 {
 	int status = 0;
@@ -3858,7 +3289,7 @@ void ComboDataInt::setComboStructParamValues(ComboStruct combo)
 	int j = 0;
 
 #if(dbg >= 1)
-		 cout << "*****ENTERING ComboDataInt::setComboStructParamValues" << endl;
+		 cout << "*****ENTERING ComboDataInt::" << __func__ << endl;
 		 cout << "comboName: " << combo.name << endl;
 #endif
 
@@ -3939,7 +3370,7 @@ void ComboDataInt::setComboStructParamValues(ComboStruct combo)
 		}
 		catch(exception &e)
 		{
-			 cout << "exception in ComboDataInt::setComboStructParamValues: " << e.what() << endl;
+			 cout << "exception in ComboDataInt::" << __func__ << ": " << e.what() << endl;
 			status = -1;
 
 		}
@@ -3948,7 +3379,7 @@ void ComboDataInt::setComboStructParamValues(ComboStruct combo)
 		this->printIndexMappedComboData();
 #endif
 #if(dbg >= 1)
-		 cout << "*****EXITING ComboDataInt::setComboStructParamValues" << endl;
+		 cout << "*****EXITING ComboDataInt::" << __func__ << endl;
 #endif
 
 }
@@ -3958,289 +3389,6 @@ ComboStruct ComboDataInt::getComboStruct()
 {
 	return this->comboStruct;
 }
-
-
-#if 0
-	_ipcComboStruct ComboDataInt::getIpcComboStruct()
-	{
-		_ipcComboStruct tempCombo;
-		_ipcComboStruct nullCombo;
-		int status = 0;
-#if(dbg >= 1)
-		 cout << "*****ENTERING ComboDataInt::getIpcComboStruct" << endl;
-		 cout << "comboName: " << this->comboName << endl;
-#endif
-
-		try
-		{
-			tempCombo.controlVoltageEnabled = false;
-			tempCombo.processCount = this->processCount;
-			tempCombo.controlCount = this->controlCount;
-			tempCombo.processSignalBufferCount = this->comboStruct.processSignalBufferCount;
-			tempCombo.processParamControlBufferCount = this->comboStruct.processParamControlBufferCount;
-
-			//int controlParamBufferIndex = 0;
-			strncpy(tempCombo.name, this->comboName.c_str(),20);
-			 cout << tempCombo.name << ":" << tempCombo.processCount << ":" << tempCombo.controlCount << ":" << tempCombo.processSignalBufferCount << endl;
-
-			// set Processes
-			int i = 0;
-			int j = 0;
-			for(i = 0; i < this->comboStruct.processCount; i++)
-			{
-				ProcessObjectData process = this->comboStruct.processSequenceData[i];
-				strncpy(tempCombo.processSequenceData[i].processName, process.processName.c_str(),20);
-				tempCombo.processSequenceData[i].processTypeInt = process.processTypeInt;
-
-				tempCombo.processSequenceData[i].footswitchNumber = process.footswitchNumber;
-				tempCombo.processSequenceData[i].processSequenceIndex = process.processSequenceIndex;
-#if(dbg >= 2)
-				 cout << "tempCombo.processSequenceData[" << i << "].processName: " << tempCombo.processSequenceData[i].processName << endl;
-				 cout << "tempCombo.processSequenceData[" << i << "].processTypeInt: " << tempCombo.processSequenceData[i].processTypeInt << endl;
-				 cout << "tempCombo.processSequenceData[" << i << "].footswitchNumber: " << tempCombo.processSequenceData[i].footswitchNumber << endl;
-#endif
-				//***************** Get input count and store values **************
-				tempCombo.processSequenceData[i].processInputCount = process.processInputCount;
-#if(dbg >= 2)
-				 cout << "tempCombo.processSequenceData[" << i << "].processInputCount: " << tempCombo.processSequenceData[i].processInputCount << endl;
-#endif
-
-				for(j = 0; j < process.processInputCount; j++)
-				{
-					tempCombo.processSequenceData[i].inputConnectedBufferIndexArray[j] = process.inputConnectedBufferIndexArray[j];
-
-#if(dbg >= 2)
-					 cout << "tempCombo.processSequenceData[" << i << "].inputConnectedBufferIndexArray[" << j << "]ConnectedBufferIndex: " << tempCombo.processSequenceData[i].inputConnectedBufferIndexArray[j] << endl;
-#endif
-
-				}
-
-				//***************** Get output count and store values  **************
-				tempCombo.processSequenceData[i].processOutputCount = process.processOutputCount;
-#if(dbg >= 2)
-				 cout << "tempCombo.processSequenceData[" << i << "].processOutputCount: " << tempCombo.processSequenceData[i].processOutputCount << endl;
-#endif
-
-				for(j = 0; j < process.processOutputCount; j++)
-				{
-
-					tempCombo.processSequenceData[i].outputConnectedBufferIndexArray[j] = process.outputConnectedBufferIndexArray[j];
-#if(dbg >= 2)
-					 cout << "tempCombo.processSequenceData[" << i << "].outputProcessSignalBufferArray[" << j << "]: " << tempCombo.processSequenceData[i].outputConnectedBufferIndexArray[j] << endl;
-#endif
-
-				}
-
-				//***************** Get parameter count and store values **************
-				tempCombo.processSequenceData[i].parameterCount = process.parameterCount;
-
-				for(j = 0; j < process.parameterCount; j++)
-				{
-					tempCombo.processSequenceData[i].parameterArray[j].internalIndexValue = process.parameterArray[j].internalIndexValue;
-					tempCombo.processSequenceData[i].parameterArray[j].paramContBufferIndex = process.parameterArray[j].paramContBufferIndex;
-					strncpy(tempCombo.processSequenceData[i].parameterArray[j].parameterName, process.parameterArray[j].parameterName.c_str(),20);
-					tempCombo.processSequenceData[i].parameterArray[j].controlConnected = process.parameterArray[j].controlConnected;
-
-#if(dbg >= 2)
-					 cout << "tempCombo.processSequenceData[" << i << "].parameter[" << j << "]->";
-					 cout << " internalIndexValue: "<< tempCombo.processSequenceData[i].parameterArray[j].internalIndexValue;
-					 cout << "\tparamContBufferIndex: " << tempCombo.processSequenceData[i].parameterArray[j].paramContBufferIndex << endl;
-#endif
-
-				}
-
-				for(; j < 10; j++)
-				{
-					tempCombo.processSequenceData[i].parameterArray[j].internalIndexValue = 0;
-					tempCombo.processSequenceData[i].parameterArray[j].controlConnected = false;
-
-				}
-				tempCombo.processSequenceData[i].bufferSize = 256;//this->procUtil.bufferSize;
-				tempCombo.processSequenceData[i].inputCouplingMode = 1;//this->procUtil.inputCouplingMode;
-				tempCombo.processSequenceData[i].antiAliasingNumber = 1;//this->procUtil.antiAliasingNumber;
-				tempCombo.processSequenceData[i].waveshaperMode = 0;//this->procUtil.waveshaperMode;
-
-
-
-			}
-
-			// set Controls
-			i = 0;
-			for(i = 0; i < this->comboStruct.controlCount; i++)
-			{
-				ControlObjectData control = this->comboStruct.controlSequenceData[i];
-				strncpy(tempCombo.controlSequenceData[i].controlName, control.controlName.c_str(),20);
-				tempCombo.controlSequenceData[i].controlTypeInt = control.controlTypeInt;
-#if(dbg >= 2)
-				 cout << "tempCombo.controlSequenceData[" << i << "].name: " << tempCombo.controlSequenceData[i].controlName << endl;
-				 cout << "tempCombo.controlSequenceData[" << i << "].conType: " << tempCombo.controlSequenceData[i].controlTypeInt << endl;
-#endif
-				{
-					 tempCombo.controlSequenceData[i].outputConnectionCount = control.outputConnectionCount;
-					for(j = 0; j < control.outputConnectionCount; j++)
-					{
-						tempCombo.controlSequenceData[i].outputToParamControlBufferIndex[j] =  control.outputToParamControlBufferIndex[j];
-#if(dbg >= 2)
-						 cout << "tempCombo.controlSequenceData[" << i << "].outputToParamControlBufferIndex: " << tempCombo.controlSequenceData[i].outputToParamControlBufferIndex[j] << endl;
-#endif
-						j++;
-					}
-
-
-					 tempCombo.controlSequenceData[i].outputInvConnectionCount = control.outputInvConnectionCount;
-					for(j = 0; j < control.outputInvConnectionCount; j++)
-					{
-						tempCombo.controlSequenceData[i].outputInvToParamControlBufferIndex[j] =  control.outputInvToParamControlBufferIndex[j];
-#if(dbg >= 2)
-						 cout << "tempCombo.controlSequenceData[" << i << "].outputInvToParamControlBufferIndex: " << tempCombo.controlSequenceData[i].outputInvToParamControlBufferIndex[j] << endl;
-#endif
-						j++;
-					}
-					tempCombo.controlSequenceData[i].outputInvConnectionCount = j;
-#if(dbg >= 2)
-					 cout << "tempCombo.controlSequenceData[" << i << "].outputToParamControlBufferIndex: " << tempCombo.controlSequenceData[i].outputToParamControlBufferIndex << endl;
-					 cout << "tempCombo.controlSequenceData[" << i << "].outputInvToParamControlBufferIndex: " << tempCombo.controlSequenceData[i].outputInvToParamControlBufferIndex << endl;
-#endif
-				}
-
-
-
-				tempCombo.controlSequenceData[i].parameterCount = control.parameterCount;
-
-				for(j = 0; j < control.parameterCount; j++)
-				{
-					strncpy(tempCombo.controlSequenceData[i].parameterArray[j].parameterName,
-							control.parameterArray[j].parameterName.c_str(),20);
-					tempCombo.controlSequenceData[i].parameterArray[j].value =
-							control.parameterArray[j].value;
-					tempCombo.controlSequenceData[i].parameterArray[j].cvEnabled =
-							control.parameterArray[j].cvEnabled;
-
-					tempCombo.controlVoltageEnabled = true; // used to set analog input mode to DC.
-
-#if(dbg >= 2)
-
-					{
-						cout << "tempCombo.controlSequenceData[" << i << "].parameter[" << j << "].value: ";
-						cout << tempCombo.controlSequenceData[i].parameterArray[j].value;
-						cout << "\t\ttempCombo.controlSequenceData[" << i << "].parameter[" << j << "].cvEnabled: ";
-						cout << tempCombo.controlSequenceData[i].parameterArray[j].cvEnabled << endl;
-					}
-#endif
-					j++;
-				}
-				for(; j < 10; j++)
-				{
-					tempCombo.controlSequenceData[i].parameterArray[j].value = 0;
-					tempCombo.controlSequenceData[i].parameterArray[j].cvEnabled = false;
-				}
-#if(dbg >= 2)
-				 cout << "tempCombo.controlVoltageEnabled: " << tempCombo.controlVoltageEnabled << endl;
-#endif
-				i++;
-			}
-
-			// set process signal buffering
-			i = 0;
-			for(auto & bufferedProcessConnection : this->comboStruct.processSignalBufferArray)
-			{
-				strncpy(tempCombo.processSignalBufferArray[i].srcProcessOutputConnector.parentObjectName,
-						bufferedProcessConnection.srcProcessOutputConnector.parentObjectName.c_str(),20);
-				strncpy(tempCombo.processSignalBufferArray[i].srcProcessOutputConnector.connectorName,
-						bufferedProcessConnection.srcProcessOutputConnector.connectorName.c_str(),20);
-				tempCombo.processSignalBufferArray[i].srcProcessOutputConnector.connectedBufferIndex =
-						bufferedProcessConnection.srcProcessOutputConnector.connectedBufferIndex;
-				tempCombo.processSignalBufferArray[i].srcProcessOutputConnector.connectorIndex =
-						bufferedProcessConnection.srcProcessOutputConnector.connectorIndex;
-				i++;
-			}
-
-			// set parameterControl buffering
-#if(dbg >= 2)
-			 cout << "set parameterControl buffering: " << this->comboStruct.processParamControlBufferCount << endl;
-#endif
-			i = 0;
-			for(auto & processParamControlConnection : this->comboStruct.processParamControlBufferArray)
-			{
-				{
-					strncpy(tempCombo.processParamControlBufferArray[i].destProcessParameterConnector.parentObjectName,
-									processParamControlConnection.destProcessParameterConnector.parentObjectName.c_str(),20);
-					strncpy(tempCombo.processParamControlBufferArray[i].destProcessParameterConnector.connectorName,
-									processParamControlConnection.destProcessParameterConnector.connectorName.c_str(),20);
-					tempCombo.processParamControlBufferArray[i].destProcessParameterConnector.connectedBufferIndex =
-									processParamControlConnection.destProcessParameterConnector.connectedBufferIndex;
-					strncpy(tempCombo.processParamControlBufferArray[i].srcControlOutputConnector.parentObjectName,
-									processParamControlConnection.srcControlOutputConnector.parentObjectName.c_str(),20);
-					strncpy(tempCombo.processParamControlBufferArray[i].srcControlOutputConnector.connectorName,
-									processParamControlConnection.srcControlOutputConnector.connectorName.c_str(),20);
-					tempCombo.processParamControlBufferArray[i].srcControlOutputConnector.connectedBufferIndex =
-									processParamControlConnection.srcControlOutputConnector.connectedBufferIndex;
-					/*tempCombo.processParamControlBufferArray[i].parameterValueIndex =
-									processParamControlConnection.parameterValueIndex;*/
-
-
-				}
-#if(dbg >= 2)
-				if(strncmp(tempCombo.processParamControlBufferArray[i].destProcessParameterConnector.parentObjectName,"empty",5) != 0)
-				{
-					cout << "destProcessParameterConnector.parentObjectName: " <<
-									tempCombo.processParamControlBufferArray[i].destProcessParameterConnector.parentObjectName << endl;
-					cout << "destProcessParameterConnector.connectorName: " <<
-									tempCombo.processParamControlBufferArray[i].destProcessParameterConnector.connectorName << endl;
-					cout << "destProcessParameterConnector.connectedBufferIndex: " <<
-									tempCombo.processParamControlBufferArray[i].destProcessParameterConnector.connectedBufferIndex << endl;
-					cout << "srcControlOutputConnector.parentObjectName: " << tempCombo.processParamControlBufferArray[i].srcControlOutputConnector.parentObjectName << endl;
-					cout << "srcControlOutputConnector.connectorName: " << tempCombo.processParamControlBufferArray[i].srcControlOutputConnector.connectorName << endl;
-					cout << "srcControlOutputConnector.connectedBufferIndex: " <<
-									tempCombo.processParamControlBufferArray[i].srcControlOutputConnector.connectedBufferIndex << endl;
-					cout << "parameterValueIndex: " << tempCombo.processParamControlBufferArray[i].parameterValueIndex << endl;
-				}
-#endif
-				i++;
-			}
-
-
-
-			tempCombo.inputSystemBufferIndex[0] = this->inputSystemBufferIndex[0];
-#if(dbg >= 2)
-			 cout << "tempCombo.inputSystemBufferIndex[0]: " << tempCombo.inputSystemBufferIndex[0] << endl;
-#endif
-
-			 tempCombo.inputSystemBufferIndex[1] = this->inputSystemBufferIndex[1];
-#if(dbg >= 2)
-			 cout << "tempCombo.inputSystemBufferIndex[1]: " << tempCombo.inputSystemBufferIndex[1] << endl;
-#endif
-
-			 tempCombo.outputSystemBufferIndex[0] = this->outputSystemBufferIndex[0];
-#if(dbg >= 2)
-			 cout << "tempCombo.outputSystemBufferIndex[0]: " << tempCombo.outputSystemBufferIndex[0] << endl;
-#endif
-
-			 tempCombo.outputSystemBufferIndex[1] = this->outputSystemBufferIndex[1];
-#if(dbg >= 2)
-			 cout << "tempCombo.outputSystemBufferIndex[1]: " << tempCombo.outputSystemBufferIndex[1] << endl;
-#endif
-		}
-		catch(exception &e)
-		{
-			 cout << "exception in ComboDataInt::getComboStruct: " << e.what() << endl;
-			status = -1;
-
-		}
-#if(dbg >= 3)
-		this->debugPrintParamContBufferListWithConnections();
-		this->printIndexMappedComboData();
-#endif
-#if(dbg >= 1)
-		 cout << "*****EXITING ComboDataInt::getIpcComboStruct" << endl;
-#endif
-
-		if(status == 0) return tempCombo;
-		else return nullCombo;
-	}
-
-#endif
-
 
 
 
@@ -4254,12 +3402,12 @@ ComboStruct ComboDataInt::getComboStruct()
 
 
 
-#define dbg 1
+#define dbg 0
 	int ComboDataInt::loadIndexMappedComboData2(Json::Value comboJson)
 	{
 		int status = 0;
 #if(dbg >= 1)
-		 cout << "*****ENTERING ComboDataInt::loadIndexMappedComboData2" << endl;
+		 cout << "*****ENTERING ComboDataInt::" << __func__ << endl;
 #endif
 
 #if(dbg >= 2)
@@ -4293,7 +3441,7 @@ ComboStruct ComboDataInt::getComboStruct()
 											this->setProcessAndControlTypeIntsInSortedStructVectors();
 											this->loadComboStruct();
 
-#if(dbg >= 1)
+#if(dbg >= 2)
 											this->printIndexMappedComboData();
 #endif
 
@@ -4362,46 +3510,59 @@ ComboStruct ComboDataInt::getComboStruct()
 			}
 			catch(exception &e)
 			{
-				cout << "exception in ComboDataInt::loadIndexMappedComboData: " << e.what() << endl;
+				cout << "exception in ComboDataInt::" << __func__ << ": " << e.what() << endl;
 			}
 
 
 #if(dbg >= 1)
-		 cout << "***** EXITING ComboDataInt::loadIndexMappedComboData2: " << status << endl;
+		 cout << "***** EXITING ComboDataInt::" << __func__ << ": " << status << endl;
 #endif
 
 		return status;
 
 	}
 
-#define dbg 1
+#define dbg 0
 	void ComboDataInt::transferComboStructBackToEffectComboJson()
 	{
 #if(dbg >= 1)
-		 cout << "*****ENTERING ComboDataInt::transferComboStructBackToEffectComboJson" << endl;
+		 cout << "*****ENTERING ComboDataInt::" << __func__ << endl;
 #endif
 		int status = 0;
 
-		//int writeSize = 0;
 		try
 		{
-			//this->updateControlParameterValuesInComboFileStruct();
 			this->setPedalUi();
-
 			this->loadComboStructDataBackIntoEffectComboJson();
-
 		}
 		catch(exception &e)
 		{
-			cout << "exception in ComboDataInt::transferComboStructBackToEffectComboJson: " << e.what() << endl;
+			cout << "exception in ComboDataInt::" << __func__ << ": " << e.what() << endl;
 			status = -1;
 		}
 
 
 #if(dbg >= 1)
-		 cout << "***** EXITING ComboDataInt::transferComboStructBackToEffectComboJson: " << status << endl;
+		 cout << "***** EXITING ComboDataInt::" << __func__ << ": " << status << endl;
 #endif
 
 	}
 
-
+	void ComboDataInt::updateComboDataInt(ComboStruct combo)
+	{
+#if(dbg >= 1)
+		 cout << "*****ENTERING ComboDataInt::" << __func__ << endl;
+#endif
+	try
+	{
+		this->setComboStructParamValues(combo);
+		this->transferComboStructBackToEffectComboJson();
+	}
+	catch(exception &e)
+	{
+		cout << "exception in ComboDataInt::" << __func__ << ": " << e.what() << endl;
+	}
+#if(dbg >= 1)
+		 cout << "***** EXITING ComboDataInt::" << __func__ << ": " << status << endl;
+#endif
+	}

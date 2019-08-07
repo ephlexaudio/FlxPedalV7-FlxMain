@@ -150,7 +150,6 @@ struct ComboJsonFileStruct
 struct ProcessSignalBuffer{
 	Connector srcProcessOutputConnector;  // connects to "srcProcessOutput"
 	vector<Connector> destProcessInputConnectorVector; //connects to "destProcessInputs"
-	//double buffer[BUFFER_SIZE]; // not needed in FlxMain
 };
 
 struct ProcessParameterControlBuffer{
@@ -322,13 +321,6 @@ struct EnvTriggerUtility {
 	UtilDoubleValue lowThres;
 };
 
-struct PedalUtility {
-	bool usbEnable;
-};
-
-struct HostPcUtility {
-	UtilOption os;
-};
 
 //***************************** Change requests **********************************
 struct PedalUtilityChange {

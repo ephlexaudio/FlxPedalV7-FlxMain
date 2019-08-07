@@ -30,9 +30,10 @@
 	string getCompactedJSONData(Json::Value data);
 	string getStringListString(vector<string> stringVector);
 	bool validateString(string dataString);
-	string removeReturnRelatedCharacters(string dirtyString);
 	ProcessControlChange parseValueChangeRequest(string changeRequestString);
 	int validateJsonBuffer(char *jsonBuffer);
+	string sanitizeString(string dirtyString);
+	void sanitizeCharArray(char *dirtyCharArray, char* cleanCharArray);
 
 
 

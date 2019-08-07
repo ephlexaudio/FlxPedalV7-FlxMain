@@ -63,19 +63,11 @@ string getCompactedJSONData(Json::Value data)
 	reducedData.erase(std::remove(reducedData.begin(), reducedData.end(), '\n'), reducedData.end());
 	reducedData.erase(std::remove(reducedData.begin(), reducedData.end(), '\r'), reducedData.end());
 	reducedData.erase(std::remove(reducedData.begin(), reducedData.end(), '\t'), reducedData.end());
-	reducedData.erase(std::remove(reducedData.begin(), reducedData.end(), ' '), reducedData.end());
+	//reducedData.erase(std::remove(reducedData.begin(), reducedData.end(), ' '), reducedData.end());
 
 	return reducedData;
 }
 
-string removeReturnRelatedCharacters(string dirtyString)
-{
-
-	dirtyString.erase(remove(dirtyString.begin(), dirtyString.end(), '\n'), dirtyString.end());
-	dirtyString.erase(remove(dirtyString.begin(), dirtyString.end(), '\r'), dirtyString.end());
-
-	return dirtyString;
-}
 
 string getStringListString(vector<string> stringVector)
 {
@@ -90,7 +82,7 @@ string getStringListString(vector<string> stringVector)
 	return vectorString;
 }
 
-#define dbg 0
+#define dbg 1
 bool validateString(string dataString)
 {
 #if(dbg >= 1)
@@ -256,6 +248,7 @@ int validateJsonBuffer(char *jsonBuffer)
 	return status;
 }
 
+#define dbg 2
 ProcessControlChange parseValueChangeRequest(string changeRequestString)
 {
 	ProcessControlChange parsedChangeRequest;
@@ -263,7 +256,7 @@ ProcessControlChange parseValueChangeRequest(string changeRequestString)
 
 	int status = 0;
 
-	#if(dbg >= 1)
+#if(dbg >= 1)
 	 cout << "***** ENTERING: parseValueChangeRequest" << endl;
 #endif
 	 try
@@ -279,6 +272,10 @@ ProcessControlChange parseValueChangeRequest(string changeRequestString)
 
 		valueString = changeRequestString.substr(delimiterPosition[1]+1);
 		parsedChangeRequest.parameterValueIndex = std::strtol((char *)valueString.c_str(), NULL, 10);
+#if(dbg >= 2)
+	 cout << parsedChangeRequest.procContName << ":" <<parsedChangeRequest.parameter << ":";
+	 cout << parsedChangeRequest.parameterValueIndex << endl;
+#endif
 
 	 }
 	 catch(exception &e)
@@ -295,3 +292,30 @@ ProcessControlChange parseValueChangeRequest(string changeRequestString)
 	return parsedChangeRequest;
 }
 
+string sanitizeString(string dirtyString)
+{
+	string cleanString;
+	for(auto & dirtyChar : dirtyString)
+	{
+		if(' ' <= dirtyChar && dirtyChar <= '~')
+		{
+			cleanString += dirtyChar;
+		}
+	}
+
+	return cleanString;
+}
+
+void sanitizeCharArray(char *dirtyCharArray, char* cleanCharArray)
+{
+	int dirtyArrayLen = strlen(dirtyCharArray);
+	int j = 0;
+
+	for(int i = 0; i < dirtyArrayLen && dirtyCharArray[i] != 0; i++)
+	{
+		if(' ' <= dirtyCharArray[i] && dirtyCharArray[i] <= '~')
+		{
+			cleanCharArray[j++] = dirtyCharArray[i];
+		}
+	}
+}

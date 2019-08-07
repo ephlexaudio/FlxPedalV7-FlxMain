@@ -16,8 +16,7 @@
 		map<string, ComboDataInt> comboDataMap;
 		vector<string> comboNameVector;
 		FileSystemInt fsInt; // used only by PedalUi, so only saving will be done
-	protected:
-		//void updateMapEntry(ComboStruct comboData);
+
 
 
 	public:
@@ -25,7 +24,6 @@
 		~ComboMap ();
 
 		int loadComboMapAndList(void);
-		int loadProcessUtilities(ProcessUtility procUtil);
 		std::vector<string> getComboNameList(void);
 		int addNewComboObjectToMapAndList(string comboName);
 		int addNewComboObjectToMap(string comboName);
@@ -35,7 +33,6 @@
 		bool isInComboMap(string comboName);
 		void eraseFromMap(string comboName);
 		int saveCombo(ComboStruct comboData);
-		int updateFromFileSystem();  // use when HostUi downloads from host to filesystem
 
 	};
 

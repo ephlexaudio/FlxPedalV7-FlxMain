@@ -8,6 +8,7 @@
 #ifndef COMPUTEMODULEPINOUTS2_H_
 #define COMPUTEMODULEPINOUTS2_H_
 
+
 #define LCD_E	24
 #define LCD_RS	22
 #define LCD_RW	23

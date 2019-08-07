@@ -14,7 +14,8 @@
 #include <map>
 #include <sys/types.h>
 
-using namespace std;
+using std::string;
+using std::map;
 
 struct ProcessParameterIndexing{
 	string paramName;

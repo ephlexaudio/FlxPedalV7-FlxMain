@@ -401,7 +401,7 @@ int PedalUiInt::closeIPCFiles(void)
 }
 
 #define dbg 0
-void PedalUiInt::sendUsbPortOpen(bool usbPortOpen)
+void PedalUiInt::sendPortOpen(bool portOpen)
 {
 
 #if(dbg >= 1)
@@ -409,7 +409,7 @@ void PedalUiInt::sendUsbPortOpen(bool usbPortOpen)
 #endif
 	this->toPedalUiMemory->exit = 0;
 	this->toPedalUiMemory->change = 1;
-	this->toPedalUiMemory->usbPortOpen = usbPortOpen;
+	this->toPedalUiMemory->portOpen = portOpen;
 
 #if(dbg >= 1)
 	cout << "***** EXITING: PedalUiInt::sendUsbConnectorOpen: " << endl;

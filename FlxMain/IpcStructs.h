@@ -9,18 +9,8 @@
 #define IPCSTRUCTS_H_
 
 
-
-
 #include "config.h"
 #define AVE_ARRAY_SIZE 16
-
-
-
-
-/**********************************************************************************************/
-using namespace std;
-
-
 
 
 struct _ipcConnector{
@@ -31,12 +21,10 @@ struct _ipcConnector{
 };
 
 
-
 // KEEP AS STRUCT
 struct _ipcProcessSignalBuffer{
 	_ipcConnector srcProcessOutputConnector; // connects to "srcProcessOutput"
 	_ipcConnector destProcessInputConnectorArray[5]; //connects to "destProcessInputs"
-	//double buffer[BUFFER_SIZE]; // omitted to save space on IPC shared mapped memory
 };
 
 struct _ipcProcessParameterControlBuffer{
@@ -44,8 +32,6 @@ struct _ipcProcessParameterControlBuffer{
 	_ipcConnector destProcessParameterConnector;
 	int parameterValueIndex;
 };
-
-
 
 
 

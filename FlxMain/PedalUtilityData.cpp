@@ -19,12 +19,10 @@ PedalUtilityData::PedalUtilityData()
 	this->gateUtil.gain = {0.01,0.001,0.1};
 	this->gateUtil.openThres = {0.2,0.1,1.5};
 
-	this->hostUtil.os = {"Lin",vector<string>{"Win","Mac","Lin"}};
 
 	this->jackUtil.buffer = {3,2,3};
 	this->jackUtil.period = {256,128,1024};
 
-	this->pedalUtil.usbEnable = true;
 
 	this->triggerUtil.highThres = {0.2,0.05,1.0};
 	this->triggerUtil.lowThres = {0.059,0.1,0.01};
@@ -262,8 +260,6 @@ int PedalUtilityData::readUtilityDataFromFile()
 		try
 
 		{
-			string option = this->pedalUtilityJson["hostPc"]["os"].asString();
-			this->hostUtil.os.option = this->validateOptionData(option, this->hostUtil.os);
 
 			int jackPeriod = this->pedalUtilityJson["jack"]["period"].asInt();
 			this->jackUtil.period.value = this->validateIntData(jackPeriod, this->jackUtil.period);
@@ -344,7 +340,6 @@ Json::Value PedalUtilityData::getUtilityDataForPedalUi()
 	pedalUiUtilityDataJson["noiseGate"]["gain"] = this->gateUtil.gain.value;
 	pedalUiUtilityDataJson["trigger"]["highThres"] = this->triggerUtil.highThres.value;
 	pedalUiUtilityDataJson["trigger"]["lowThres"] = this->triggerUtil.lowThres.value;
-	pedalUiUtilityDataJson["hostPc"]["os"] = this->hostUtil.os.option;
 
 	return pedalUiUtilityDataJson;
 }
@@ -365,13 +360,11 @@ int PedalUtilityData::writeUtilityDataToFile()
 	{
 		this->pedalUtilityJson["envTrigger"]["highThres"] = this->triggerUtil.highThres.value;
 		this->pedalUtilityJson["envTrigger"]["lowThres"] = this->triggerUtil.lowThres.value;
-		this->pedalUtilityJson["hostPc"]["os"] = this->hostUtil.os.option;
 		this->pedalUtilityJson["jack"]["buffer"] = this->jackUtil.buffer.value;
 		this->pedalUtilityJson["jack"]["period"] = this->jackUtil.period.value;
 		this->pedalUtilityJson["noiseGate"]["openThres"] =this->gateUtil.openThres.value;
 		this->pedalUtilityJson["noiseGate"]["closeThres"] = this->gateUtil.closeThres.value;
 		this->pedalUtilityJson["noiseGate"]["gain"] = this->gateUtil.gain.value;
-		this->pedalUtilityJson["pedal"]["usbEnable"] = this->pedalUtil.usbEnable;
 		this->pedalUtilityJson["process"]["antiAliasingNumber"] = this->processUtil.antiAliasingNumber.value;
 		this->pedalUtilityJson["process"]["bufferSize"] = this->processUtil.bufferSize.value;
 		this->pedalUtilityJson["process"]["inputCouplingMode"] = this->processUtil.inputCouplingMode.option;
@@ -522,14 +515,6 @@ int PedalUtilityData::updateUtilityValue(string utilityParameterString, string u
 	#endif
 			}
 		}
-		else if(utility.compare("hostPc") == 0)
-		{
-			utilType = 4;
-			if(utilityParameter.compare("os") == 0)
-			{
-				this->hostUtil.os.option = utilityParameterValue;
-			}
-		}
 	}
 	catch(exception &e)
 	{
@@ -651,116 +636,8 @@ EnvTriggerUtility PedalUtilityData::getEnvTriggerUtility()
 }
 
 
-#define dbg 0
-PedalUtility PedalUtilityData::getPedalUtility()
-{
-#if(dbg >= 1)
-	 cout << "***** ENTERING: PedalUtilityData::getPedalUtil" << endl;
-#endif
-	 PedalUtility pedalUtil;
-	try
-	{
-		pedalUtil.usbEnable = this->pedalUtil.usbEnable;
-	}
-	catch(exception &e)
-	{
-		cout << "exception in PedalUtilityData::getPedalUtil: " << e.what() << endl;
-	}
-
-#if(dbg >= 1)
-	 cout << "***** EXITING: PedalUtilityData::getPedalUtil" << endl;
-#endif
-	 return pedalUtil;
-}
-
-#define dbg 0
-HostPcUtility PedalUtilityData::getHostUtility()
-{
-#if(dbg >= 1)
-	 cout << "***** ENTERING: PedalUtilityData::getHostUtil" << endl;
-#endif
-	 HostPcUtility hostUtil;
-	try
-	{
-		hostUtil.os.option = this->hostUtil.os.option;
-	}
-	catch(exception &e)
-	{
-		cout << "exception in PedalUtilityData::getHostUtil: " << e.what() << endl;
-	}
-
-#if(dbg >= 1)
-	 cout << "***** EXITING: PedalUtilityData::getHostUtil" << endl;
-#endif
-	 return hostUtil;
-}
-
-#define dbg 0
-void PedalUtilityData::setNoiseGateUtility(NoiseGateUtility gateUtil)
-{
-#if(dbg >= 1)
-	 cout << "***** ENTERING: PedalUtilityData::setNoiseGateUtility" << endl;
-#endif
-		try
-		{
-			this->gateUtil.closeThres.value = gateUtil.closeThres.value;
-			this->gateUtil.openThres.value = gateUtil.openThres.value;
-			this->gateUtil.gain.value = gateUtil.gain.value;
-		}
-		catch(exception &e)
-		{
-			cout << "exception in PedalUtilityData::setNoiseGateUtility: " << e.what() << endl;
-		}
-#if(dbg >= 1)
-	 cout << "***** EXITING: PedalUtilityData::setNoiseGateUtility" << endl;
-#endif
-}
-
-#define dbg 0
-void PedalUtilityData::setEnvTriggerUtility(EnvTriggerUtility triggerUtil)
-{
-#if(dbg >= 1)
-	 cout << "***** ENTERING: PedalUtilityData::setEnvTriggerUtility" << endl;
-#endif
-
-	try
-	{
-		this->triggerUtil.highThres.value = triggerUtil.highThres.value;
-		this->triggerUtil.lowThres.value = triggerUtil.lowThres.value;
-	}
-	catch(exception &e)
-	{
-		cout << "exception in PedalUtilityData::setEnvTriggerUtility: " << e.what() << endl;
-	}
-
-#if(dbg >= 1)
-	 cout << "***** EXITING: PedalUtilityData::setEnvTriggerUtility" << endl;
-#endif
-}
 
 
-
-#define dbg 0
-void PedalUtilityData::setJackUtility(JackUtility jackUtil)
-{
-#if(dbg >= 1)
-	 cout << "***** ENTERING: PedalUtilityData::setJackUtility" << endl;
-#endif
-
-	try
-	{
-		this->jackUtil.buffer = jackUtil.buffer;
-		this->jackUtil.period = jackUtil.period;
-	}
-	catch(exception &e)
-	{
-		cout << "exception in PedalUtilityData::setJackUtility: " << e.what() << endl;
-	}
-
-#if(dbg >= 1)
-	 cout << "***** EXITING: PedalUtilityData::setJackUtility" << endl;
-#endif
-}
 
 
 
@@ -770,7 +647,7 @@ void PedalUtilityData::setJackUtility(JackUtility jackUtil)
 
 
 
-#if(1)
+
 #define dbg 1
 // Used for initialization
 int PedalUtilityData::sendIpcProcessUtility()
@@ -869,7 +746,7 @@ int PedalUtilityData::sendIpcEnvTriggerUtility()
 #endif
 	 return status;
 }
-#endif
+
 
 
 

@@ -15,31 +15,31 @@ GPIOClass::GPIOClass(int/*string*/ gnum)
 	this->gpionum = gnum;  //Instatiate GPIOClass object for GPIO pin number "gnum"
 }
 
-int GPIOClass::exconnector_gpio()
+int GPIOClass::export_gpio()
 {
-	string exconnector_str = "/sys/class/gpio/exconnector";
-	ofstream exconnectorgpio(exconnector_str.c_str()); // Open "exconnector" file. Convert C++ string to C string. Required for all Linux pathnames
-	/*if (exconnectorgpio < 0){
-		cout << " OPERATION FAILED: Unable to exconnector GPIO"<< this->gpionum <<" ."<< endl;
+	string export_str = "/sys/class/gpio/export";
+	ofstream exportgpio(export_str.c_str()); // Open "export" file. Convert C++ string to C string. Required for all Linux pathnames
+	/*if (exportgpio < 0){
+		cout << " OPERATION FAILED: Unable to export GPIO"<< this->gpionum <<" ."<< endl;
 		return -1;
 	}*/
 
-	exconnectorgpio << this->gpionum ; //write GPIO number to exconnector
-    exconnectorgpio.close(); //close exconnector file
+	exportgpio << this->gpionum ; //write GPIO number to export
+    exportgpio.close(); //close export file
     return 0;
 }
 
-int GPIOClass::unexconnector_gpio()
+int GPIOClass::unexport_gpio()
 {
-	string unexconnector_str = "/sys/class/gpio/unexconnector";
-	ofstream unexconnectorgpio(unexconnector_str.c_str()); //Open unexconnector file
-	/*if (unexconnectorgpio < 0){
-		cout << " OPERATION FAILED: Unable to unexconnector GPIO"<< this->gpionum <<" ."<< endl;
+	string unexport_str = "/sys/class/gpio/unexport";
+	ofstream unexportgpio(unexport_str.c_str()); //Open unexport file
+	/*if (unexportgpio < 0){
+		cout << " OPERATION FAILED: Unable to unexport GPIO"<< this->gpionum <<" ."<< endl;
 		return -1;
 	}*/
 
-	unexconnectorgpio << this->gpionum ; //write GPIO number to unexconnector
-    unexconnectorgpio.close(); //close unexconnector file
+	unexportgpio << this->gpionum ; //write GPIO number to unexport
+    unexportgpio.close(); //close unexport file
     return 0;
 }
 
